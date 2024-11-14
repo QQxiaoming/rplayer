@@ -1,85 +1,225 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
-import QtMultimedia 6.5
 
-ApplicationWindow {
+Window {
+    id: root
+    width: 1080
+    height: 1920
+
     visible: true
-    width: 540
-    height: 720
-    title: qsTr("Video Player")
 
-    property int slideThreshold: 100
-    property int currentIndex: 0
-    property var videoSources: []
-
-    Video {
-        id: videoPlayer
-        anchors.fill: parent
-        autoPlay: true
-        loops: MediaPlayer.Infinite
-
-        onPlaying: {
-            if(videoSources.length) {
-                videoName.text = videoSources[currentIndex]
-            }
-        }
-    }
-
-    Text {
-        id: videoName
-        color: "white"
-        font.pixelSize: 20
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+    ToolBar {
+        id: toolBar
+        anchors.right: parent.right
+        font.pixelSize: 60
+        anchors.left: parent.left
+        contentHeight: toolButton.implicitHeight
         z: 1
-    }
 
-    MultiPointTouchArea {
-        anchors.fill: parent
-        onReleased: function(touchPoints) {
-            if (touchPoints.length === 1) {
-                var touchPoint = touchPoints[0];
-                if(videoSources.length) {
-                    if (touchPoint.startY - touchPoint.y > slideThreshold) {
-                        // Slide up to play next video
-                        currentIndex = (currentIndex + 1) % videoSources.length;
-                        videoPlayer.source = videoSources[currentIndex];
-                        videoPlayer.play();
-                        console.log("next video");
-                    } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
-                        // Slide down to play previous video
-                        currentIndex = (currentIndex - 1 + videoSources.length) % videoSources.length;
-                        videoPlayer.source = videoSources[currentIndex];
-                        videoPlayer.play();
-                        console.log("previous video");
-                    }
+        ToolButton {
+            id: toolButton
+            contentItem: Text {
+                text: "\u2630"
+                color: "white"
+                font: parent.font
+                style: Text.Outline
+                styleColor: "black"
+            }
+            background: Rectangle {
+                color: toolButton.hovered ? "gray" : "transparent"
+            }
+            onClicked: {
+                if (stackView.depth > 1) {
+                    stackView.pop();
+                    drawer.open();
+                } else {
+                    drawer.open();
                 }
             }
         }
+
+        Label {
+            id : label1
+            width: 120
+            anchors.left: parent.left
+            anchors.top: toolButton.top
+            anchors.leftMargin: 360
+            anchors.topMargin: 10
+            Text {
+                text: "关注"
+                color: "white"
+                font.pixelSize: 60
+                style: Text.Outline
+                styleColor: "black"
+            }
+        }
+
+        Label {
+            id: label2
+            width: 120
+            anchors.left: label1.right
+            anchors.top: toolButton.top
+            anchors.leftMargin: 40
+            anchors.topMargin: 10
+            Text {
+                text: "直播"
+                color: "white"
+                font.pixelSize: 60
+                style: Text.Outline
+                styleColor: "black"
+            }
+        }
+
+        Label {
+            id: label3
+            width: 120
+            anchors.left: label2.right
+            anchors.top: toolButton.top
+            anchors.leftMargin: 40
+            anchors.topMargin: 10
+            Text {
+                text: "推荐"
+                color: "white"
+                font.pixelSize: 60
+                style: Text.Outline
+                styleColor: "black"
+            }
+        }
+
+        background: Rectangle {
+            color: "transparent"
+        }
+    }
+
+    StackView {
+        id: stackView
+        anchors.fill: parent
+        initialItem: videoView
+    }
+
+    VideoView {
+        id: videoView
+    }
+
+    InputView {
+        id: inputView
+        visible: false
+        onAccepted: {
+            stackView.pop();
+            videoView.readJsonUrl(inputView.inputText);
+            var datetime = new Date();
+            debugView.text = debugView.text + datetime.toLocaleString() + " - " + inputView.inputText + "\n";
+        }
+        onRejected: {
+            stackView.pop();
+        }
+    }
+
+    AboutView {
+        id: aboutView
+        visible: false
+    }
+    
+    DebugView {
+        id: debugView
+        visible: false
+    }
+
+    Component.onCompleted: {
+        console.log("start app...");
     }
 
     FileDialog {
         id: fileDialog
-        title: qsTr("Select Video File")
-        fileMode: FileDialog.OpenFiles
-        nameFilters: ["Video files (*.mp4 *.avi *.mkv)"]
+        title: qsTr("选择JSON文件")
+        fileMode: FileDialog.OpenFile
+        nameFilters: ["JSON文件 (*.json)"]
         onAccepted: {
-            for (var i = 0; i < fileDialog.selectedFiles.length; i++) {
-                videoSources.push(fileDialog.selectedFiles[i]);
-            }
-            currentIndex = videoSources.length - 1
-            videoPlayer.source = videoSources[currentIndex];
-            console.log("Current video source: " + videoSources[currentIndex]);
-            videoPlayer.play();
+            videoView.readJsonUrl(fileDialog.selectedFile);
+            var datetime = new Date();
+            debugView.text = debugView.text + datetime.toLocaleString() + " - " + fileDialog.selectedFile + "\n";
         }
     }
 
-    Button {
-        text: qsTr("Open Video")
-        anchors.top: parent.top
-        anchors.left: parent.left
-        onClicked: fileDialog.open()
+    Drawer {
+        id: drawer
+        width: root.width * 0.5
+        height: root.height
+        background: Rectangle {
+            color: "#363535"
+        }
+
+        property string color: "#f1f1f1"
+        property int fontpixelSize: 60
+
+        Column {
+            anchors.fill: parent
+            spacing: 10
+
+            ItemDelegate {
+                width: parent.width
+                contentItem: Text {
+                    text: qsTr("添加数据源（本地）")
+                    color: drawer.color
+                    font.pixelSize: drawer.fontpixelSize
+                }
+                background: Rectangle {
+                    color: "transparent"
+                }
+                onClicked: {
+                    drawer.close();
+                    fileDialog.open();
+                }
+            }
+
+            ItemDelegate {
+                width: parent.width
+                contentItem: Text {
+                    text: qsTr("添加数据源（网络）")
+                    color: drawer.color
+                    font.pixelSize: drawer.fontpixelSize
+                }
+                background: Rectangle {
+                    color: "transparent"
+                }
+                onClicked: {
+                    drawer.close();
+                    stackView.push(inputView);
+                }
+            }
+
+            ItemDelegate {
+                width: parent.width
+                contentItem: Text {
+                    text: qsTr("关于")
+                    color: drawer.color
+                    font.pixelSize: drawer.fontpixelSize
+                }
+                background: Rectangle {
+                    color: "transparent"
+                }
+                onClicked: {
+                    drawer.close();
+                    stackView.push(aboutView);
+                }
+            }
+
+            ItemDelegate {
+                width: parent.width
+                contentItem: Text {
+                    text: qsTr("调试")
+                    color: drawer.color
+                    font.pixelSize: drawer.fontpixelSize
+                }
+                background: Rectangle {
+                    color: "transparent"
+                }
+                onClicked: {
+                    drawer.close();
+                    stackView.push(debugView);
+                }
+            }
+        }
     }
 }

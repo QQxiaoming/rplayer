@@ -1,0 +1,330 @@
+import QtQuick
+import QtQuick.Controls
+import QtMultimedia
+
+Item {
+    property int slideThreshold: 100
+    property int currentIndex: 0
+    property var parsedData: []
+
+    function readJsonUrl(url) {
+        var jsonData = jsonReader.readJsonUrl(fileDialog.selectedFile);
+        if (jsonData && jsonData.list) {
+            parsedData = Object.values(jsonData.list);
+            if(parsedData.length) {
+                parsedData.sort(() => Math.random() - 0.5);
+                currentIndex = 0;
+                videoPlayer.source = parsedData[currentIndex].path;
+                videoPlayer.play();
+            }
+        }
+    }
+
+    Rectangle {
+        id: videoView
+        anchors.fill: parent
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        color: "black"
+
+        Video {
+            id: videoPlayer
+            anchors.fill: parent
+            anchors.leftMargin: 0
+            anchors.topMargin: 0
+            autoPlay: true
+            loops: MediaPlayer.Infinite
+
+            onPlaying: {
+                if(parsedData.length) {
+                    var video = parsedData[currentIndex];
+                    videoTitle.text = video.title;
+                    videoInfo.text = video.info;
+                    videoIcon.source = video.icon;
+                    likeNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+                    bookMarkNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+                    starNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+                }
+            }
+        }
+
+        Icon {
+            id: videoIcon
+            y: 1104
+            radius: 50
+            anchors.left: videoInfoLabel.left
+            anchors.bottom: videoInfoLabel.top
+            anchors.leftMargin: 0
+            anchors.bottomMargin: 20
+            z: 1
+
+            RotationAnimator on rotation {
+                from: 0
+                to: 360
+                duration: 4000
+                running: true
+                loops: Animation.Infinite
+            }
+        }
+
+        Label {
+            id : videoTitleLabel
+            Text {
+                id: videoTitle
+                text: "____________"
+                color: "white"
+                font.pixelSize: 60
+                style: Text.Outline
+                styleColor: "black"
+            }
+            anchors.left: videoIcon.right
+            anchors.right: videoInfoLabel.right
+            anchors.top: videoIcon.top
+            anchors.leftMargin: 20
+            anchors.rightMargin: 0
+            anchors.topMargin: 0
+            height: videoIcon.radius*2
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+            font.capitalization: Font.Capitalize
+            z: 1
+        }
+
+        Label {
+            id : videoInfoLabel
+            Text {
+                id: videoInfo
+                text: "____________________________________________\n____________________________________________\n____________________________________________\n____________________________________________\n____________________________________________\n"
+                color: "white"
+                font.pixelSize: 40
+                font.capitalization: Font.Capitalize
+                style: Text.Outline
+                styleColor: "black"
+            }
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.bottom
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: -320
+            anchors.bottomMargin: 20
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignTop
+            z: 1
+        }
+
+        Icon {
+            id: infoIcon
+            radius: 50
+            anchors.right: videoInfoLabel.right
+            anchors.rightMargin: 20
+            anchors.bottom: videoInfoLabel.bottom
+            anchors.bottomMargin: 50
+            z: 1
+            codePoint: "0xf007"
+            enableHover: true
+            hoveredColor: "#1abc9c"
+            borderWidth : 0
+            Rectangle {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.bottom
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                anchors.topMargin: 4
+                color: "transparent"
+                Label {
+                    anchors.fill: parent
+                    text: "详情"
+                    color: "white"
+                    font.pixelSize: 40
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    style: Text.Outline
+                    styleColor: "black"
+                    font.capitalization: Font.Capitalize
+                }
+            }
+        }
+
+        Icon {
+            id: likeIcon
+            radius: 50
+            anchors.right: infoIcon.right
+            anchors.rightMargin: 0
+            anchors.bottom: infoIcon.top
+            anchors.bottomMargin: 50
+            z: 1
+            codePoint: "0xf004"
+            enableHover: true
+            hoveredColor: "#e74c3c"
+            borderWidth : 0
+            Rectangle {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.bottom
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                anchors.topMargin: 4
+                color: "transparent"
+                Label {
+                    id: likeNum
+                    anchors.fill: parent
+                    text: "0"
+                    color: "white"
+                    font.pixelSize: 40
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    style: Text.Outline
+                    styleColor: "black"
+                    font.capitalization: Font.Capitalize
+                }
+            }
+            onClicked: {
+                if(parsedData.length) {
+                    var curr = parseInt(likeNum.text);
+                    if(holdHovered) {
+                        likeNum.text = curr-1;
+                    } else {
+                        likeNum.text = curr+1;
+                    }
+                    holdHovered = !holdHovered;
+                }
+            }
+        }
+
+        Icon {
+            id: bookMarkIcon
+            radius: 50
+            anchors.right: infoIcon.right
+            anchors.rightMargin: 0
+            anchors.bottom: likeIcon.top
+            anchors.bottomMargin: 50
+            z: 1
+            codePoint: "0xf006"
+            enableHover: true
+            hoveredColor: "#3498db"
+            borderWidth : 0
+            Rectangle {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.bottom
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                anchors.topMargin: 4
+                color: "transparent"
+                Label {
+                    id: bookMarkNum
+                    anchors.fill: parent
+                    text: "0"
+                    color: "white"
+                    font.pixelSize: 40
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    style: Text.Outline
+                    styleColor: "black"
+                    font.capitalization: Font.Capitalize
+                }
+            }
+            onClicked: {
+                if(parsedData.length) {
+                    var curr = parseInt(bookMarkNum.text);
+                    if(holdHovered) {
+                        bookMarkNum.text = curr-1;
+                    } else {
+                        bookMarkNum.text = curr+1;
+                    }
+                    holdHovered = !holdHovered;
+                }
+            }
+        }
+
+        Icon {
+            id: starIcon
+            radius: 50
+            anchors.right: infoIcon.right
+            anchors.rightMargin: 0
+            anchors.bottom: bookMarkIcon.top
+            anchors.bottomMargin: 50
+            z: 1
+            codePoint: "0xf087"
+            enableHover: true
+            hoveredColor: "#f1c40f"
+            borderWidth : 0
+            Rectangle {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.bottom
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                anchors.topMargin: 4
+                color: "transparent"
+                Label {
+                    id: starNum
+                    anchors.fill: parent
+                    text: "0"
+                    color: "white"
+                    font.pixelSize: 40
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    style: Text.Outline
+                    styleColor: "black"
+                    font.capitalization: Font.Capitalize
+                }
+            }
+            onClicked: {
+                if(parsedData.length) {
+                    var curr = parseInt(starNum.text);
+                    if(holdHovered) {
+                        starNum.text = curr-1;
+                    } else {
+                        starNum.text = curr+1;
+                    }
+                    holdHovered = !holdHovered;
+                }
+            }
+        }
+
+        MultiPointTouchArea {
+            id: multiPointTouchArea
+            anchors.fill: parent
+            anchors.leftMargin: 0
+            anchors.topMargin: 0
+            onReleased: function(touchPoints) {
+                if (touchPoints.length === 1) {
+                    var touchPoint = touchPoints[0];
+                    if(parsedData.length) {
+                        if (touchPoint.startY - touchPoint.y > slideThreshold) {
+                            // Slide up to play next video
+                            currentIndex = (currentIndex + 1) % parsedData.length;
+                            videoPlayer.source = parsedData[currentIndex].path;
+                            videoPlayer.play();
+                            likeIcon.holdHovered = false;
+                            bookMarkIcon.holdHovered = false;
+                            starIcon.holdHovered = false;
+                            likeIcon.refresh()
+                            bookMarkIcon.refresh()
+                            starIcon.refresh()
+                        } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
+                            // Slide down to play previous video
+                            currentIndex = (currentIndex - 1 + parsedData.length) % parsedData.length;
+                            videoPlayer.source = parsedData[currentIndex].path;
+                            videoPlayer.play();
+                            likeIcon.holdHovered = false;
+                            bookMarkIcon.holdHovered = false;
+                            starIcon.holdHovered = false;
+                            likeIcon.refresh()
+                            bookMarkIcon.refresh()
+                            starIcon.refresh()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

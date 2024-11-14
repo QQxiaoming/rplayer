@@ -17,6 +17,20 @@ qt_add_qml_module(apprplayer
     VERSION 1.0
     QML_FILES
         Main.qml
+        Icon.qml
+        VideoView.qml
+        InputView.qml
+        AboutView.qml
+        DebugView.qml
+    SOURCES 
+        jsonreader.h 
+        fonticon.h 
+        lib/QFontIcon/qfonticon.cpp 
+        lib/QFontIcon/qfonticon.h
+    RESOURCES 
+        res/fontawesome-webfont-v6.6.0-brands-400.ttf 
+        res/fontawesome-webfont-v6.6.0-solid-900.ttf
+
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

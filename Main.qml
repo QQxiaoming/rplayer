@@ -20,7 +20,8 @@ Window {
         ToolButton {
             id: toolButton
             contentItem: Text {
-                text: "\u2630"
+                id: toolButtonText
+                text: stackView.depth > 1 ? "\u25C0" : "\u2630"
                 color: "white"
                 font: parent.font
                 style: Text.Outline
@@ -32,59 +33,43 @@ Window {
             onClicked: {
                 if (stackView.depth > 1) {
                     stackView.pop();
-                    drawer.open();
                 } else {
                     drawer.open();
                 }
             }
         }
 
-        Label {
+        TitleLabel {
             id : label1
             width: 120
+            height: 70
             anchors.left: parent.left
             anchors.top: toolButton.top
             anchors.leftMargin: 360
             anchors.topMargin: 10
-            Text {
-                text: "关注"
-                color: "white"
-                font.pixelSize: 60
-                style: Text.Outline
-                styleColor: "black"
-            }
+            text: "关注"
         }
 
-        Label {
+        TitleLabel {
             id: label2
             width: 120
+            height: 70
             anchors.left: label1.right
             anchors.top: toolButton.top
             anchors.leftMargin: 40
             anchors.topMargin: 10
-            Text {
-                text: "直播"
-                color: "white"
-                font.pixelSize: 60
-                style: Text.Outline
-                styleColor: "black"
-            }
+            text: "直播"
         }
 
-        Label {
+        TitleLabel {
             id: label3
             width: 120
+            height: 70
             anchors.left: label2.right
             anchors.top: toolButton.top
             anchors.leftMargin: 40
             anchors.topMargin: 10
-            Text {
-                text: "推荐"
-                color: "white"
-                font.pixelSize: 60
-                style: Text.Outline
-                styleColor: "black"
-            }
+            text: "推荐"
         }
 
         background: Rectangle {
@@ -100,6 +85,10 @@ Window {
 
     VideoView {
         id: videoView
+        onShowInfoDialog: function(info) {
+            infoDialog.text = info;
+            stackView.push(infoDialog);
+        }
     }
 
     InputView {
@@ -126,19 +115,37 @@ Window {
         visible: false
     }
 
+    DebugView {
+        id: infoDialog
+        visible: false
+    }
+
     Component.onCompleted: {
         console.log("start app...");
     }
 
     FileDialog {
-        id: fileDialog
+        id: jsonFileDialog
         title: qsTr("选择JSON文件")
         fileMode: FileDialog.OpenFile
         nameFilters: ["JSON文件 (*.json)"]
         onAccepted: {
-            videoView.readJsonUrl(fileDialog.selectedFile);
+            videoView.readJsonUrl(jsonFileDialog.selectedFile);
             var datetime = new Date();
-            debugView.text = debugView.text + datetime.toLocaleString() + " - " + fileDialog.selectedFile + "\n";
+            debugView.text = debugView.text + datetime.toLocaleString() + " - " + jsonFileDialog.selectedFile + "\n";
+        }
+    }
+
+    FileDialog {
+        id: videoFileDialog
+        title: qsTr("选择视频文件")
+        fileMode: FileDialog.OpenFile
+        nameFilters: ["视频文件 (*.mp4 *.mkv *.avi)"]
+        onAccepted: {
+            var json = "{\"list\":[{\"path\":\"" + videoFileDialog.selectedFile + "\",\"title\":\"调试\",\"info\":\"调试\"}]}";
+            videoView.readJsonUrl(json);
+            var datetime = new Date();
+            debugView.text = debugView.text + datetime.toLocaleString() + " - " + videoFileDialog.selectedFile + "\n";
         }
     }
 
@@ -169,7 +176,7 @@ Window {
                 }
                 onClicked: {
                     drawer.close();
-                    fileDialog.open();
+                    jsonFileDialog.open();
                 }
             }
 
@@ -186,6 +193,22 @@ Window {
                 onClicked: {
                     drawer.close();
                     stackView.push(inputView);
+                }
+            }
+
+            ItemDelegate {
+                width: parent.width
+                contentItem: Text {
+                    text: qsTr("添加视频（调试）")
+                    color: drawer.color
+                    font.pixelSize: drawer.fontpixelSize
+                }
+                background: Rectangle {
+                    color: "transparent"
+                }
+                onClicked: {
+                    drawer.close();
+                    videoFileDialog.open();
                 }
             }
 

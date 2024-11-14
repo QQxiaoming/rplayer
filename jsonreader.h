@@ -32,14 +32,13 @@ public:
 
             QJsonDocument document = QJsonDocument::fromJson(jsonData);
             if (document.isNull() || !document.isObject()) {
-                qWarning() << "Failed to parse JSON file:" << filePath;
+                qWarning() << "Failed to parse Local JSON file:" << filePath;
                 return QVariantMap();
             }
 
             return document.object().toVariantMap();
-        } else {
+        } else if(url.isValid()) {
             // from remote file
-            QUrl url(filePath);
             QNetworkAccessManager *manager = new QNetworkAccessManager(this);
             QNetworkRequest request(url);
             QNetworkReply *reply = manager->get(request);
@@ -52,10 +51,19 @@ public:
 
             QJsonDocument document = QJsonDocument::fromJson(jsonData);
             if (document.isNull() || !document.isObject()) {
-                qWarning() << "Failed to parse JSON file:" << filePath;
+                qWarning() << "Failed to parse remote JSON file:" << filePath;
                 return QVariantMap();
             }
 
+            return document.object().toVariantMap();
+        } else {
+            QByteArray jsonData = filePath.toUtf8();
+
+            QJsonDocument document = QJsonDocument::fromJson(jsonData);
+            if (document.isNull() || !document.isObject()) {
+                qWarning() << "Failed to parse JSON file:" << filePath;
+                return QVariantMap();
+            }
             return document.object().toVariantMap();
         }
     }

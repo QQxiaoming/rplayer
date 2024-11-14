@@ -7,6 +7,8 @@ Item {
     property string codePoint: "0xf110"
     property bool enableHover: false
     property bool holdHovered: false
+    property real hoveredScale: 1.2
+    property bool enablePressAnimation: true
     property string hoveredColor: "#202020"
     property alias source: sourceItem.source
     property alias borderWidth: iconRect.border.width
@@ -36,6 +38,19 @@ Item {
         border.width: 2
         clip: true
         color: "transparent"
+        
+        property real scale: 1.0
+        Behavior on scale {
+            NumberAnimation {
+                duration: 100
+            }
+        }
+        transform: Scale {
+            origin.x: iconRect.width / 2
+            origin.y: iconRect.height / 2
+            xScale: iconRect.scale
+            yScale: iconRect.scale
+        }
 
         ToolButton {
             id: button
@@ -46,9 +61,22 @@ Item {
             }
             onHoveredChanged: {
                 iconRect.parent.refresh()
+                if(button.hovered) {
+                    iconRect.scale = hoveredScale
+                } else {
+                    iconRect.scale = 1.0
+                }
             }
             onClicked: {
                 iconRect.parent.clicked()
+            }
+            onPressed: {
+                if(enablePressAnimation) {
+                    iconRect.scale = 0.8
+                }
+            }
+            onReleased: {
+                iconRect.scale = 1.0
             }
         }
 

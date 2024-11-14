@@ -7,8 +7,10 @@ Item {
     property int currentIndex: 0
     property var parsedData: []
 
+    signal showInfoDialog(var info)
+
     function readJsonUrl(url) {
-        var jsonData = jsonReader.readJsonUrl(fileDialog.selectedFile);
+        var jsonData = jsonReader.readJsonUrl(url);
         if (jsonData && jsonData.list) {
             parsedData = Object.values(jsonData.list);
             if(parsedData.length) {
@@ -40,7 +42,9 @@ Item {
                     var video = parsedData[currentIndex];
                     videoTitle.text = video.title;
                     videoInfo.text = video.info;
-                    videoIcon.source = video.icon;
+                    if(video.icon) {
+                        videoIcon.source = video.icon;
+                    }
                     likeNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
                     bookMarkNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
                     starNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
@@ -57,6 +61,8 @@ Item {
             anchors.leftMargin: 0
             anchors.bottomMargin: 20
             z: 1
+            enablePressAnimation: false
+            hoveredScale: 1.5
 
             RotationAnimator on rotation {
                 from: 0
@@ -145,6 +151,11 @@ Item {
                     style: Text.Outline
                     styleColor: "black"
                     font.capitalization: Font.Capitalize
+                }
+            }
+            onClicked: {
+                if(parsedData.length) {
+                    videoView.parent.showInfoDialog(parsedData[currentIndex].path);
                 }
             }
         }

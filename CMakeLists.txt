@@ -18,6 +18,7 @@ qt_add_qml_module(apprplayer
     QML_FILES
         Main.qml
         Icon.qml
+        TitleLabel.qml
         VideoView.qml
         InputView.qml
         AboutView.qml

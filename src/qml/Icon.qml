@@ -69,6 +69,7 @@ Item {
             }
             onClicked: {
                 iconRect.parent.clicked()
+                iconRect.parent.refresh()
             }
             onPressed: {
                 if(enablePressAnimation) {
@@ -82,7 +83,7 @@ Item {
 
         Image {
             id: sourceItem
-            source: fontIcon ? fontIcon.getIcon(codePoint, button.hovered ? hoveredColor : "Default") : ""
+            source: fontIcon ? fontIcon.getIcon(codePoint) : ""
             anchors.centerIn: parent
             width: parent.width
             height: parent.height

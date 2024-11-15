@@ -5,6 +5,7 @@ import QtMultimedia
 Item {
     property int slideThreshold: 100
     property int currentIndex: 0
+    property string jsonUrl: ""
     property var parsedData: []
 
     signal showInfoDialog(var info)
@@ -15,11 +16,40 @@ Item {
             parsedData = Object.values(jsonData.list);
             if(parsedData.length) {
                 parsedData.sort(() => Math.random() - 0.5);
+                jsonUrl = url;
                 currentIndex = 0;
-                videoPlayer.source = parsedData[currentIndex].path;
-                videoPlayer.play();
+                refreshVideo(true);
             }
         }
+    }
+
+    function writeInfo(str) {
+        if(parsedData.length) {
+            parsedData[currentIndex].info = str;
+            videoInfo.text = str;
+            if(jsonUrl) {
+                jsonReader.updateJsonUrl(jsonUrl, parsedData[currentIndex]);
+            }
+        }
+    }
+
+    function refreshVideo(direction) {
+        var video = parsedData[currentIndex];
+        videoPlayer.switchVideo(video.path,direction);
+        videoTitle.text = video.title;
+        videoInfo.text = video.info;
+        if(video.icon) {
+            videoIcon.source = video.icon;
+        }
+        likeNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+        bookMarkNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+        starNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+        likeIcon.holdHovered = false;
+        bookMarkIcon.holdHovered = false;
+        starIcon.holdHovered = false;
+        likeIcon.refresh()
+        bookMarkIcon.refresh()
+        starIcon.refresh()
     }
 
     Rectangle {
@@ -29,27 +59,11 @@ Item {
         anchors.topMargin: 0
         color: "black"
 
-        Video {
+        VideoPlayer {
             id: videoPlayer
             anchors.fill: parent
             anchors.leftMargin: 0
             anchors.topMargin: 0
-            autoPlay: true
-            loops: MediaPlayer.Infinite
-
-            onPlaying: {
-                if(parsedData.length) {
-                    var video = parsedData[currentIndex];
-                    videoTitle.text = video.title;
-                    videoInfo.text = video.info;
-                    if(video.icon) {
-                        videoIcon.source = video.icon;
-                    }
-                    likeNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
-                    bookMarkNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
-                    starNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
-                }
-            }
         }
 
         Icon {
@@ -77,8 +91,9 @@ Item {
             id : videoTitleLabel
             Text {
                 id: videoTitle
-                text: "____________"
+                text: "\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_"
                 color: "white"
+                textFormat: Text.MarkdownText
                 font.pixelSize: 60
                 style: Text.Outline
                 styleColor: "black"
@@ -100,8 +115,9 @@ Item {
             id : videoInfoLabel
             Text {
                 id: videoInfo
-                text: "____________________________________________\n____________________________________________\n____________________________________________\n____________________________________________\n____________________________________________\n"
+                text: "\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n"
                 color: "white"
+                textFormat: Text.MarkdownText
                 font.pixelSize: 40
                 font.capitalization: Font.Capitalize
                 style: Text.Outline
@@ -155,7 +171,7 @@ Item {
             }
             onClicked: {
                 if(parsedData.length) {
-                    videoView.parent.showInfoDialog(parsedData[currentIndex].path);
+                    videoView.parent.showInfoDialog(parsedData[currentIndex].info);
                 }
             }
         }
@@ -313,25 +329,11 @@ Item {
                         if (touchPoint.startY - touchPoint.y > slideThreshold) {
                             // Slide up to play next video
                             currentIndex = (currentIndex + 1) % parsedData.length;
-                            videoPlayer.source = parsedData[currentIndex].path;
-                            videoPlayer.play();
-                            likeIcon.holdHovered = false;
-                            bookMarkIcon.holdHovered = false;
-                            starIcon.holdHovered = false;
-                            likeIcon.refresh()
-                            bookMarkIcon.refresh()
-                            starIcon.refresh()
+                            refreshVideo(true);
                         } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
                             // Slide down to play previous video
                             currentIndex = (currentIndex - 1 + parsedData.length) % parsedData.length;
-                            videoPlayer.source = parsedData[currentIndex].path;
-                            videoPlayer.play();
-                            likeIcon.holdHovered = false;
-                            bookMarkIcon.holdHovered = false;
-                            starIcon.holdHovered = false;
-                            likeIcon.refresh()
-                            bookMarkIcon.refresh()
-                            starIcon.refresh()
+                            refreshVideo(false);
                         }
                     }
                 }

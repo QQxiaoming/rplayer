@@ -5,7 +5,7 @@
 #include <QIcon>
 #include <QDebug>
 
-#include "./lib/QFontIcon/qfonticon.h"
+#include "qfonticon.h"
 
 class FontIcon : public QObject {
     Q_OBJECT

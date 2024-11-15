@@ -28,7 +28,7 @@ Window {
                 styleColor: "black"
             }
             background: Rectangle {
-                color: toolButton.hovered ? "gray" : "transparent"
+                color: toolButton.pressed ? "gray" : toolButton.hovered ? "gray" : "transparent"
             }
             onClicked: {
                 if (stackView.depth > 1) {
@@ -39,37 +39,46 @@ Window {
             }
         }
 
-        TitleLabel {
-            id : label1
-            width: 120
+        Rectangle {
+            width: 440
             height: 70
-            anchors.left: parent.left
             anchors.top: toolButton.top
-            anchors.leftMargin: 360
             anchors.topMargin: 10
-            text: "关注"
-        }
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: "transparent"
 
-        TitleLabel {
-            id: label2
-            width: 120
-            height: 70
-            anchors.left: label1.right
-            anchors.top: toolButton.top
-            anchors.leftMargin: 40
-            anchors.topMargin: 10
-            text: "直播"
-        }
+            TitleLabel {
+                id : labelStar
+                width: 120
+                height: 70
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.leftMargin: 0
+                anchors.topMargin: 0
+                text: "关注"
+            }
 
-        TitleLabel {
-            id: label3
-            width: 120
-            height: 70
-            anchors.left: label2.right
-            anchors.top: toolButton.top
-            anchors.leftMargin: 40
-            anchors.topMargin: 10
-            text: "推荐"
+            TitleLabel {
+                id: labelLive
+                width: 120
+                height: 70
+                anchors.left: labelStar.right
+                anchors.top: parent.top
+                anchors.leftMargin: 40
+                anchors.topMargin: 0
+                text: "直播"
+            }
+
+            TitleLabel {
+                id: labelTrend
+                width: 120
+                height: 70
+                anchors.left: labelLive.right
+                anchors.top: parent.top
+                anchors.leftMargin: 40
+                anchors.topMargin: 0
+                text: "推荐"
+            }
         }
 
         background: Rectangle {
@@ -113,11 +122,17 @@ Window {
     DebugView {
         id: debugView
         visible: false
+        wrapMode: TextEdit.Wrap
     }
 
     DebugView {
         id: infoDialog
+        readOnly: false
         visible: false
+        onAccepted: function(str){
+            videoView.writeInfo(str);
+            stackView.pop();
+        }
     }
 
     Component.onCompleted: {

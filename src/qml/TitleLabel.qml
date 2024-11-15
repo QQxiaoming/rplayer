@@ -11,7 +11,7 @@ Item {
             id: button
             anchors.fill: parent
             background: Rectangle {
-                color: button.hovered ? "gray" : "transparent"
+                color: button.pressed ? "gray" : button.hovered ? "gray" : "transparent"
             }
         }
         Text {

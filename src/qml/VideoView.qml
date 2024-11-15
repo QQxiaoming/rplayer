@@ -40,6 +40,14 @@ Item {
         videoInfo.text = video.info;
         if(video.icon) {
             videoIcon.source = video.icon;
+        } else {
+            videoIcon.source = fontIcon ? fontIcon.getIcon("0xf110") : ""
+        }
+        if(video.icon2) {
+            videoIcon2.source = video.icon2;
+            videoIcon2.visible = true;
+        } else {
+            videoIcon2.visible = false;
         }
         likeNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
         bookMarkNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
@@ -87,6 +95,27 @@ Item {
             }
         }
 
+        Icon {
+            id: videoIcon2
+            radius: videoIcon.radius
+            anchors.left: videoIcon.right
+            anchors.bottom: videoIcon.bottom
+            anchors.leftMargin: 40
+            anchors.bottomMargin: 0
+            z: 1
+            enablePressAnimation: videoIcon.enablePressAnimation
+            hoveredScale: videoIcon.hoveredScale
+            visible: false
+
+            RotationAnimator on rotation {
+                from: 0
+                to: 360
+                duration: 4000
+                running: true
+                loops: Animation.Infinite
+            }
+        }
+
         Label {
             id : videoTitleLabel
             Text {
@@ -98,9 +127,9 @@ Item {
                 style: Text.Outline
                 styleColor: "black"
             }
-            anchors.left: videoIcon.right
+            anchors.left: videoIcon2.visible ? videoIcon2.right : videoIcon.right
             anchors.right: videoInfoLabel.right
-            anchors.top: videoIcon.top
+            anchors.top: videoIcon2.visible ? videoIcon2.top : videoIcon.top
             anchors.leftMargin: 20
             anchors.rightMargin: 0
             anchors.topMargin: 0

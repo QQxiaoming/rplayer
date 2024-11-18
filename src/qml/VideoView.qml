@@ -23,13 +23,17 @@ Item {
         }
     }
 
-    function writeInfo(str) {
+    function updateJsonUrl(index) {
+        if(jsonUrl) {
+            jsonReader.updateJsonUrl(jsonUrl, parsedData[index]);
+        }
+    }
+
+    function updateVideoInfo(str) {
         if(parsedData.length) {
-            parsedData[currentIndex].info = str;
             videoInfo.text = str;
-            if(jsonUrl) {
-                jsonReader.updateJsonUrl(jsonUrl, parsedData[currentIndex]);
-            }
+            parsedData[currentIndex].info = str;
+            updateJsonUrl(currentIndex);
         }
     }
 
@@ -49,9 +53,21 @@ Item {
         } else {
             videoIcon2.visible = false;
         }
-        likeNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
-        bookMarkNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
-        starNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+        if(typeof video.like === "undefined") {
+            likeNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+        } else {
+            likeNum.text = video.like;
+        }
+        if(typeof video.bookMark === "undefined") {
+            bookMarkNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+        } else {
+            bookMarkNum.text = video.bookMark;
+        }
+        if(typeof video.star === "undefined") {
+            starNum.text = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+        } else {
+            starNum.text = video.star;
+        }
         likeIcon.holdHovered = false;
         bookMarkIcon.holdHovered = false;
         starIcon.holdHovered = false;
@@ -89,7 +105,7 @@ Item {
             RotationAnimator on rotation {
                 from: 0
                 to: 360
-                duration: 4000
+                duration: 5000
                 running: true
                 loops: Animation.Infinite
             }
@@ -110,7 +126,7 @@ Item {
             RotationAnimator on rotation {
                 from: 0
                 to: 360
-                duration: 4000
+                duration: 5000
                 running: true
                 loops: Animation.Infinite
             }
@@ -247,6 +263,8 @@ Item {
                     } else {
                         likeNum.text = curr+1;
                     }
+                    parsedData[currentIndex].like = parseInt(likeNum.text);
+                    updateJsonUrl(currentIndex);
                     holdHovered = !holdHovered;
                 }
             }
@@ -294,6 +312,8 @@ Item {
                     } else {
                         bookMarkNum.text = curr+1;
                     }
+                    parsedData[currentIndex].bookMark = parseInt(bookMarkNum.text);
+                    updateJsonUrl(currentIndex);
                     holdHovered = !holdHovered;
                 }
             }
@@ -341,6 +361,8 @@ Item {
                     } else {
                         starNum.text = curr+1;
                     }
+                    parsedData[currentIndex].star = parseInt(starNum.text);
+                    updateJsonUrl(currentIndex);
                     holdHovered = !holdHovered;
                 }
             }

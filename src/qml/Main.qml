@@ -130,7 +130,7 @@ Window {
         readOnly: false
         visible: false
         onAccepted: function(str){
-            videoView.writeInfo(str);
+            videoView.updateVideoInfo(str);
             stackView.pop();
         }
     }

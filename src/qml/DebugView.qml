@@ -43,8 +43,8 @@ Item {
         Icon {
             id: button
             radius: 80
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.top: parent.top
+            anchors.topMargin: 100
             anchors.right: parent.right
             anchors.rightMargin: 50
             visible: !input.readOnly

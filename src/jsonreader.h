@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
+#include <QFileInfo>
 #include <QUrl>
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
@@ -23,6 +24,7 @@ public:
         if(url.isLocalFile()) {
             // from LocalFile
             QFile file(url.toLocalFile());
+            QFileInfo fileInfo(file);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 qWarning() << "Failed to open file:" << filePath;
                 return QVariantMap();
@@ -30,6 +32,7 @@ public:
 
             QByteArray jsonData = file.readAll();
             file.close();
+            jsonData.replace("{JSON_PATH}", fileInfo.absolutePath().toUtf8());
 
             QJsonDocument document = QJsonDocument::fromJson(jsonData);
             if (document.isNull() || !document.isObject()) {

@@ -1,0 +1,57 @@
+name: ios
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'doc/**'
+      - 'README.md'
+
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'doc/**'
+      - 'README.md'
+
+  workflow_dispatch:
+
+jobs:
+  ios:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt ios
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.0'
+          modules: 'qtmultimedia qtquick3dphysics qtquick3d qtquicktimeline'
+          aqtversion: ==3.1.18
+          target: ios
+          host: mac
+
+      - name: Build all
+        shell: bash -l {0}
+        env:
+          QT_HOST_PATH: /Users/runner/work/rplayer/Qt/6.8.0/macos
+          QT_TARGET_PATH: /Users/runner/work/rplayer/Qt/6.8.0/ios
+        run: |
+          ${{env.QT_TARGET_PATH}}/bin/qt-cmake --version
+          ${{env.QT_TARGET_PATH}}/bin/qt-cmake -B build/ -G Xcode \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_FIND_ROOT_PATH:PATH=${{env.QT_TARGET_PATH}} \
+            -DCMAKE_PREFIX_PATH:PATH=${{env.QT_TARGET_PATH}} \
+            -DQT_HOST_PATH:PATH=${{env.QT_HOST_PATH}} \
+            -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED="NO"
+          cmake --build build/ --config Release -- CODE_SIGNING_ALLOWED=NO
+          cp -r ./build/Release-iphoneos/rplayer.app ./         
+          cp ./tools/convert-ipa.sh ./convert-ipa.sh
+          ./convert-ipa.sh 
+          mv ./IPAFolder/rplayer.ipa ./
+
+      - name: Upload build asserts
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            rplayer.ipa

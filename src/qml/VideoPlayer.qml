@@ -6,20 +6,41 @@ Item {
     StackView {
         id: stackView
         anchors.fill: parent
-        initialItem: videoPlayer1
+        initialItem: videoOutput1
 
         property bool direction: true
 
-        Video {
-            id: videoPlayer1
-            autoPlay: true
-            loops: MediaPlayer.Infinite
+        MediaDevices {
+            id: devices
         }
 
-        Video {
-            id: videoPlayer2
+        AudioOutput {
+            id: audioOutput
+            device: devices.defaultAudioOutput
+        }
+
+        VideoOutput {
+            id: videoOutput1
+        }
+
+        VideoOutput {
+            id: videoOutput2
+        }
+
+        MediaPlayer {
+            id: mediaPlayer1
             autoPlay: true
             loops: MediaPlayer.Infinite
+            videoOutput: videoOutput1
+            audioOutput: audioOutput
+        }
+
+        MediaPlayer {
+            id: mediaPlayer2
+            autoPlay: true
+            loops: MediaPlayer.Infinite
+            videoOutput: videoOutput2
+            audioOutput: null
         }
 
         replaceEnter: Transition {
@@ -41,11 +62,15 @@ Item {
     }
 
     function switchVideo(source, direction) {
-        var currentVideo = stackView.currentItem;
-        var nextVideo = (currentVideo === videoPlayer1) ? videoPlayer2 : videoPlayer1;
-        nextVideo.source = source;
-        nextVideo.play();
+        var currentVideoOutput = stackView.currentItem;
+        var nextVideoOutput = (currentVideoOutput === videoOutput1) ? videoOutput2 : videoOutput1;
+        var nextPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer2 : mediaPlayer1;
+        var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
+        nextPlayer.source = source;
+        nextPlayer.play();
+        currentPlayer.audioOutput = null;
+        nextPlayer.audioOutput = audioOutput;
         stackView.direction = direction;
-        stackView.replace(currentVideo, nextVideo);
+        stackView.replace(currentVideoOutput, nextVideoOutput);
     }
 }

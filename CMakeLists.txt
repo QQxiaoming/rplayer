@@ -53,6 +53,9 @@ target_link_libraries(rplayer
 
 if(IOS)
     qt_add_ios_ffmpeg_libraries(rplayer)
+    set(CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "14.0")
+    set(CMAKE_XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2") # iPhone,iPad
+    set(CMAKE_XCODE_ATTRIBUTE_INFOPLIST_FILE "${CMAKE_CURRENT_SOURCE_DIR}/platform/ios/Info.plist")
 endif()
 
 include(GNUInstallDirs)

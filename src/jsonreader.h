@@ -97,7 +97,11 @@ public:
             for(int i = 0; i < list.size(); i++) {
                 QJsonObject item = list[i].toObject();
                 if(item["path"] == updateObject["path"]) {
-                    list[i] = updateObject;
+                    if(updateObject["info"].toString() == "") {
+                        list.removeAt(i);
+                    } else {
+                        list[i] = updateObject;
+                    }
                     break;
                 }
             }

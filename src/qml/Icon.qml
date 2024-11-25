@@ -60,24 +60,24 @@ Item {
                 radius: iconRect.radius
             }
             onHoveredChanged: {
-                iconRect.parent.refresh()
+                iconRect.parent.refresh();
                 if(button.hovered) {
-                    iconRect.scale = hoveredScale
+                    iconRect.scale = hoveredScale;
                 } else {
-                    iconRect.scale = 1.0
+                    iconRect.scale = 1.0;
                 }
             }
             onClicked: {
-                iconRect.parent.clicked()
-                iconRect.parent.refresh()
+                iconRect.parent.clicked();
+                iconRect.parent.refresh();
             }
             onPressed: {
                 if(enablePressAnimation) {
-                    iconRect.scale = 0.8
+                    iconRect.scale = 0.8;
                 }
             }
             onReleased: {
-                iconRect.scale = 1.0
+                iconRect.scale = 1.0;
             }
         }
 

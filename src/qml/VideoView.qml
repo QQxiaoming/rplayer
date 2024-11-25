@@ -3,6 +3,9 @@ import QtQuick.Controls
 import QtMultimedia
 
 Item {
+    implicitHeight : 1920
+    implicitWidth : 1080
+
     property int slideThreshold: 100
     property int currentIndex: 0
     property string jsonUrl: ""
@@ -15,6 +18,7 @@ Item {
         if (jsonData && jsonData.list) {
             parsedData = Object.values(jsonData.list);
             if(parsedData.length) {
+                parsedData.pop();
                 parsedData.sort(() => Math.random() - 0.5);
                 jsonUrl = url;
                 currentIndex = 0;
@@ -39,15 +43,19 @@ Item {
 
     function refreshVideo(direction) {
         var video = parsedData[currentIndex];
-        videoPlayer.switchVideo(video.path,direction);
+        var enableFullScreen = false;
+        if(typeof video.fullScreen !== "undefined") {
+            enableFullScreen = video.fullScreen
+        }
+        videoPlayer.switchVideo(video.path,direction,enableFullScreen);
         videoTitle.text = video.title;
         videoInfo.text = video.info;
-        if(video.icon) {
+        if(typeof video.icon !== "undefined") {
             videoIcon.source = video.icon;
         } else {
             videoIcon.source = fontIcon ? fontIcon.getIcon("0xf110") : ""
         }
-        if(video.icon2) {
+        if(typeof video.icon2 !== "undefined") {
             videoIcon2.source = video.icon2;
             videoIcon2.visible = true;
         } else {
@@ -88,6 +96,7 @@ Item {
             anchors.fill: parent
             anchors.leftMargin: 0
             anchors.topMargin: 0
+            z: 1
         }
 
         Icon {
@@ -377,14 +386,20 @@ Item {
                 if (touchPoints.length === 1) {
                     var touchPoint = touchPoints[0];
                     if(parsedData.length) {
-                        if (touchPoint.startY - touchPoint.y > slideThreshold) {
-                            // Slide up to play next video
-                            currentIndex = (currentIndex + 1) % parsedData.length;
-                            refreshVideo(true);
-                        } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
-                            // Slide down to play previous video
-                            currentIndex = (currentIndex - 1 + parsedData.length) % parsedData.length;
-                            refreshVideo(false);
+                        if(videoPlayer.fullScreen) {
+                            if (touchPoint.x - touchPoint.startX > slideThreshold) {
+                                videoPlayer.exitFullScreen();
+                            }
+                        } else {
+                            if (touchPoint.startY - touchPoint.y > slideThreshold) {
+                                // Slide up to play next video
+                                currentIndex = (currentIndex + 1) % parsedData.length;
+                                refreshVideo(true);
+                            } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
+                                // Slide down to play previous video
+                                currentIndex = (currentIndex - 1 + parsedData.length) % parsedData.length;
+                                refreshVideo(false);
+                            }
                         }
                     }
                 }

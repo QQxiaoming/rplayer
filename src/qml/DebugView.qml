@@ -2,6 +2,9 @@ import QtQuick
 import QtQuick.Controls
 
 Item {
+    implicitHeight : 1920
+    implicitWidth : 1080
+
     property alias readOnly: input.readOnly
     property alias text: input.text
     property alias wrapMode: input.wrapMode

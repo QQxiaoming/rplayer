@@ -2,6 +2,9 @@ import QtQuick
 import QtQuick.Controls
 
 Item {
+    implicitHeight : 1920
+    implicitWidth : 1080
+
     property alias inputText: textInput.text
 
     signal accepted()

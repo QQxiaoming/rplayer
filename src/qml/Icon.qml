@@ -10,9 +10,10 @@ Item {
     property real hoveredScale: 1.2
     property bool enablePressAnimation: true
     property string hoveredColor: "#202020"
+    property string hoveredBackColor: "gray"
     property alias source: sourceItem.source
     property alias borderWidth: iconRect.border.width
-
+    property alias orientation: iconRect.rotation
 
     width: radius*2
     height: width
@@ -22,9 +23,9 @@ Item {
     function refresh() {
         if (enableHover) {
             if(holdHovered) {
-                sourceItem.source = fontIcon ? fontIcon.getIcon(codePoint, hoveredColor ) : "";
+                sourceItem.source = fontIcon ? fontIcon.getIcon(codePoint, hoveredColor, radius*2) : "";
             } else {
-                sourceItem.source = fontIcon ? fontIcon.getIcon(codePoint, button.hovered ? hoveredColor : "Default") : "";
+                sourceItem.source = fontIcon ? fontIcon.getIcon(codePoint, button.hovered ? hoveredColor : "Default", radius*2) : "";
             }
         }
     }
@@ -56,7 +57,7 @@ Item {
             id: button
             anchors.fill: parent
             background: Rectangle {
-                color: button.hovered ? "gray" : "transparent"
+                color: button.hovered ? hoveredBackColor : "transparent"
                 radius: iconRect.radius
             }
             onHoveredChanged: {
@@ -83,7 +84,7 @@ Item {
 
         Image {
             id: sourceItem
-            source: fontIcon ? fontIcon.getIcon(codePoint) : ""
+            source: fontIcon ? fontIcon.getIcon(codePoint, "Default", radius*2) : ""
             anchors.centerIn: parent
             width: parent.width
             height: parent.height

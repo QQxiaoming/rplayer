@@ -7,6 +7,7 @@ Item {
     implicitWidth : 1080
 
     property int slideThreshold: 100
+    property int chickThreshold: 40
     property int currentIndex: 0
     property string jsonUrl: ""
     property var parsedData: []
@@ -53,7 +54,7 @@ Item {
         if(typeof video.icon !== "undefined") {
             videoIcon.source = video.icon;
         } else {
-            videoIcon.source = fontIcon ? fontIcon.getIcon("0xf110") : ""
+            videoIcon.source = fontIcon ? fontIcon.getIcon("0xf110","Default",videoIcon.radius*2) : ""
         }
         if(typeof video.icon2 !== "undefined") {
             videoIcon2.source = video.icon2;
@@ -84,6 +85,22 @@ Item {
         starIcon.refresh()
     }
 
+    function hideUI(enable){
+        var video = parsedData[currentIndex];
+        if(typeof video.icon2 !== "undefined") {
+            videoIcon2.visible = enable;
+        } else {
+            videoIcon2.visible = false;
+        }
+        videoIcon.visible = enable;
+        likeIcon.visible = enable;
+        bookMarkIcon.visible = enable;
+        starIcon.visible = enable;
+        infoIcon.visible = enable;
+        videoTitleLabel.visible = enable;
+        videoInfoLabel.visible = enable;
+    }
+
     Rectangle {
         id: videoView
         anchors.fill: parent
@@ -97,6 +114,9 @@ Item {
             anchors.leftMargin: 0
             anchors.topMargin: 0
             z: 1
+            onFullScreened: function(fullScreen) {
+                hideUI(!fullScreen);
+            }
         }
 
         Icon {
@@ -386,19 +406,29 @@ Item {
                 if (touchPoints.length === 1) {
                     var touchPoint = touchPoints[0];
                     if(parsedData.length) {
+                        if ((touchPoint.x - touchPoint.startX < chickThreshold)&&
+                            (touchPoint.x - touchPoint.startX > -chickThreshold)&&
+                            (touchPoint.y - touchPoint.startY < chickThreshold)&&
+                            (touchPoint.y - touchPoint.startY > -chickThreshold) ){
+                            videoPlayer.pause();
+                            return;
+                        }
                         if(videoPlayer.fullScreen) {
                             if (touchPoint.x - touchPoint.startX > slideThreshold) {
                                 videoPlayer.exitFullScreen();
+                                return;
                             }
                         } else {
                             if (touchPoint.startY - touchPoint.y > slideThreshold) {
                                 // Slide up to play next video
                                 currentIndex = (currentIndex + 1) % parsedData.length;
                                 refreshVideo(true);
+                                return;
                             } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
                                 // Slide down to play previous video
                                 currentIndex = (currentIndex - 1 + parsedData.length) % parsedData.length;
                                 refreshVideo(false);
+                                return;
                             }
                         }
                     }

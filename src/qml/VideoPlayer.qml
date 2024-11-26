@@ -9,6 +9,8 @@ Item {
     property bool enableFullScreen: false
     property alias fullScreen: videoOutputFull.visible
 
+    signal fullScreened(var info)
+
     Button {
         id: buttonFullScreen
         width: 380
@@ -30,13 +32,14 @@ Item {
             color: buttonFullScreen.pressed ? "gray" : buttonFullScreen.hovered ? "gray" : "transparent"
         }
         onClicked: {
-            console.log("FullScreen");
             var currentVideoOutput = stackView.currentItem;
             var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
             currentPlayer.videoOutput = videoOutputFull;
             videoOutputFull.visible = true;
             buttonFullScreen.visible = false;
             stackView.visible = false;
+            pauseIcon.orientation =  videoOutputFull.orientation;
+            fullScreened(true);
         }
     }
 
@@ -106,6 +109,20 @@ Item {
         orientation: -90
     }
 
+    Icon {
+        id: pauseIcon
+        codePoint: "0xf04b"
+        anchors.centerIn: parent
+        radius: parent.width/4
+        borderWidth: 10
+        hoveredBackColor: "transparent"
+        visible: false
+        z: 2
+        onClicked :{
+            pause();
+        }
+    }
+
     function switchVideo(source, direction, enableFullScreen) {
         var currentVideoOutput = stackView.currentItem;
         var nextVideoOutput = (currentVideoOutput === videoOutput1) ? videoOutput2 : videoOutput1;
@@ -120,6 +137,18 @@ Item {
         stackView.replace(currentVideoOutput, nextVideoOutput);
     }
 
+    function pause() {
+        var currentVideoOutput = stackView.currentItem;
+        var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
+        if(currentPlayer.playing) {
+            currentPlayer.pause();
+            pauseIcon.visible = true
+        } else {
+            currentPlayer.play();
+            pauseIcon.visible = false
+        }
+    }
+
     function exitFullScreen() {
         var currentVideoOutput = stackView.currentItem;
         var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
@@ -127,5 +156,7 @@ Item {
         videoOutputFull.visible = false;
         buttonFullScreen.visible = true;
         stackView.visible = true;
+        pauseIcon.orientation = 0;
+        fullScreened(false);
     }
 }

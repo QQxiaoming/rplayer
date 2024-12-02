@@ -1,18 +1,19 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
+import QtMultimedia
 
 Window {
     id: root
-    width: 1080
-    height: 1920
+    width: (Qt.platform.os === "ios" || Qt.platform.os === "android") ? Screen.width : 1080
+    height: (Qt.platform.os === "ios" || Qt.platform.os === "android") ? Screen.height : 1920
 
     visible: true
 
     ToolBar {
         id: toolBar
         anchors.right: parent.right
-        font.pixelSize: 60
+        font.pixelSize: 70
         anchors.left: parent.left
         contentHeight: toolButton.implicitHeight
         z: 1
@@ -78,6 +79,7 @@ Window {
                 anchors.leftMargin: 40
                 anchors.topMargin: 0
                 text: "推荐"
+                foreceUnderLine: true
             }
         }
 
@@ -135,8 +137,19 @@ Window {
         }
     }
 
+    MediaDevices {
+        id: audioDevices
+    }
+
     Component.onCompleted: {
         console.log("start app...");
+        var list = audioDevices.audioOutputs;
+        debugView.text = debugView.text + "audioOutputs" + "\n";
+        for (var i of list) {
+            debugView.text = debugView.text + i + "\n";
+        }
+        debugView.text = debugView.text + "defaultAudioOutput" + "\n";
+        debugView.text = debugView.text + audioDevices.defaultAudioOutput + "\n";
     }
 
     FileDialog {

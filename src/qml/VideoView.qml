@@ -419,6 +419,9 @@ Item {
                                 return;
                             }
                         } else {
+                            if(videoPlayer.paused) {
+                                return;
+                            }
                             if (touchPoint.startY - touchPoint.y > slideThreshold) {
                                 // Slide up to play next video
                                 currentIndex = (currentIndex + 1) % parsedData.length;

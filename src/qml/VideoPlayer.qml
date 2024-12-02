@@ -8,8 +8,18 @@ Item {
 
     property bool enableFullScreen: false
     property alias fullScreen: videoOutputFull.visible
+    property alias paused: pauseIcon.visible
 
     signal fullScreened(var info)
+
+    MediaDevices {
+        id: devices
+    }
+
+    AudioOutput {
+        id: audioOutput
+        device: devices.defaultAudioOutput
+    }
 
     Button {
         id: buttonFullScreen
@@ -50,15 +60,6 @@ Item {
 
         property bool direction: true
 
-        MediaDevices {
-            id: devices
-        }
-
-        AudioOutput {
-            id: audioOutput
-            device: devices.defaultAudioOutput
-        }
-
         VideoOutput {
             id: videoOutput1
         }
@@ -73,6 +74,7 @@ Item {
             loops: MediaPlayer.Infinite
             videoOutput: videoOutput1
             audioOutput: audioOutput
+            onMetaDataChanged: updateMetadata()
         }
 
         MediaPlayer {
@@ -81,6 +83,7 @@ Item {
             loops: MediaPlayer.Infinite
             videoOutput: videoOutput2
             audioOutput: null
+            onMetaDataChanged: updateMetadata()
         }
 
         replaceEnter: Transition {
@@ -158,5 +161,18 @@ Item {
         stackView.visible = true;
         pauseIcon.orientation = 0;
         fullScreened(false);
+    }
+
+    function updateMetadata() {
+        var currentVideoOutput = stackView.currentItem;
+        var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
+        if (currentPlayer.metaData) {
+            var metaData = currentPlayer.metaData;
+             for (var key of metaData.keys()) {
+                 if (metaData.stringValue(key)) {
+                    console.log(metaData.metaDataKeyToString(key),metaData.stringValue(key));
+                 }
+             }
+         }
     }
 }

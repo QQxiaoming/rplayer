@@ -79,6 +79,7 @@ public:
         QUrl url(filePath);
         if(url.isLocalFile()) {
             QFile file(url.toLocalFile());
+            QFileInfo fileInfo(file);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 qWarning() << "Failed to open file:" << filePath;
                 return;
@@ -96,7 +97,17 @@ public:
             QJsonArray list = obj["list"].toArray();
             for(int i = 0; i < list.size(); i++) {
                 QJsonObject item = list[i].toObject();
-                if(item["path"] == updateObject["path"]) {
+                QString target = item["path"].toString();
+                if(target.replace("{JSON_PATH}", fileInfo.absolutePath().toUtf8()) == updateObject["path"].toString()) {
+                    if(updateObject["info"].toString() == "") {
+                        list.removeAt(i);
+                    } else {
+                        updateObject["path"] = target;
+                        list[i] = updateObject;
+                    }
+                    break;
+                }
+                if(target == updateObject["path"].toString()) {
                     if(updateObject["info"].toString() == "") {
                         list.removeAt(i);
                     } else {

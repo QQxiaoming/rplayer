@@ -44,7 +44,11 @@ Item {
 
     function refreshVideo(direction) {
         var video = parsedData[currentIndex];
-        videoPlayer.switchVideo(video.path,direction);
+        if(typeof video.type === "undefined") {
+            videoPlayer.switchVideo("video",video.path,direction);
+        } else {
+            videoPlayer.switchVideo(video.type,video.path,direction);
+        }
         videoTitle.text = video.title;
         videoInfo.text = video.info;
         if(typeof video.icon !== "undefined") {

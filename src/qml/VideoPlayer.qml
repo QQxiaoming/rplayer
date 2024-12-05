@@ -42,8 +42,8 @@ Item {
             color: buttonFullScreen.pressed ? "gray" : buttonFullScreen.hovered ? "gray" : "transparent"
         }
         onClicked: {
-            var currentVideoOutput = stackView.currentItem;
-            var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
+            var currentMediaOutput = stackView.currentItem;
+            var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
             currentPlayer.videoOutput = videoOutputFull;
             videoOutputFull.visible = true;
             buttonFullScreen.visible = false;
@@ -56,23 +56,23 @@ Item {
     StackView {
         id: stackView
         anchors.fill: parent
-        initialItem: videoOutput1
+        initialItem: mediaOutput1
 
         property bool direction: true
 
-        VideoOutput {
-            id: videoOutput1
+        MediaOutput {
+            id: mediaOutput1
         }
 
-        VideoOutput {
-            id: videoOutput2
+        MediaOutput {
+            id: mediaOutput2
         }
 
         MediaPlayer {
             id: mediaPlayer1
             autoPlay: true
             loops: MediaPlayer.Infinite
-            videoOutput: videoOutput1
+            videoOutput: mediaOutput1.videoView
             audioOutput: audioOutput
             onMetaDataChanged: updateMetadata()
         }
@@ -81,7 +81,7 @@ Item {
             id: mediaPlayer2
             autoPlay: true
             loops: MediaPlayer.Infinite
-            videoOutput: videoOutput2
+            videoOutput: mediaOutput2.videoView
             audioOutput: null
             onMetaDataChanged: updateMetadata()
         }
@@ -126,23 +126,37 @@ Item {
         }
     }
 
-    function switchVideo(source, direction) {
-        var currentVideoOutput = stackView.currentItem;
-        var nextVideoOutput = (currentVideoOutput === videoOutput1) ? videoOutput2 : videoOutput1;
-        var nextPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer2 : mediaPlayer1;
-        var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
-        nextPlayer.source = source;
-        nextPlayer.play();
-        currentPlayer.audioOutput = null;
-        nextPlayer.audioOutput = audioOutput;
-        stackView.direction = direction;
-        stackView.replace(currentVideoOutput, nextVideoOutput);
-        updateMetadata();
+    function switchVideo(type, source, direction) {
+        var currentMediaOutput = stackView.currentItem;
+        var nextMediaOutput = (currentMediaOutput === mediaOutput1) ? mediaOutput2 : mediaOutput1;
+        var nextPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer2 : mediaPlayer1;
+        var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
+        if(type === "video") {
+            nextMediaOutput.videoView.visible = true;
+            nextMediaOutput.imageView.visible = false;
+            nextPlayer.source = source;
+            nextPlayer.play();
+            currentPlayer.audioOutput = null;
+            nextPlayer.audioOutput = audioOutput;
+            stackView.direction = direction;
+            stackView.replace(currentMediaOutput, nextMediaOutput);
+            updateMetadata();
+        } else if(type === "image") {
+            nextMediaOutput.imageView.visible = true;
+            nextMediaOutput.videoView.visible = false;
+            currentMediaOutput.imageView.stop();
+            nextMediaOutput.imageView.play(source);
+            currentPlayer.audioOutput = null;
+            nextPlayer.audioOutput = null;
+            stackView.direction = direction;
+            stackView.replace(currentMediaOutput, nextMediaOutput);
+            buttonFullScreen.visible = false;
+        }
     }
 
     function pause() {
-        var currentVideoOutput = stackView.currentItem;
-        var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
+        var currentMediaOutput = stackView.currentItem;
+        var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
         if(currentPlayer.playing) {
             currentPlayer.pause();
             pauseIcon.visible = true
@@ -153,9 +167,9 @@ Item {
     }
 
     function exitFullScreen() {
-        var currentVideoOutput = stackView.currentItem;
-        var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
-        currentPlayer.videoOutput = currentVideoOutput;
+        var currentMediaOutput = stackView.currentItem;
+        var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
+        currentPlayer.videoOutput = currentMediaOutput;
         videoOutputFull.visible = false;
         buttonFullScreen.visible = true;
         stackView.visible = true;
@@ -164,8 +178,8 @@ Item {
     }
 
     function updateMetadata() {
-        var currentVideoOutput = stackView.currentItem;
-        var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
+        var currentMediaOutput = stackView.currentItem;
+        var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
         if (currentPlayer.metaData) {
             var metaData = currentPlayer.metaData;
             for (var key of metaData.keys()) {

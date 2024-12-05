@@ -12,6 +12,7 @@ def generate(data_dir, output, title="", info="", icon_path="", like=-1, star=-1
     for file in files:
         file_path = os.path.abspath(os.path.join(data_dir, file))
         item = {}
+        item['type'] = 'video'
         if(len(title)):
             item['title'] = title
         else:

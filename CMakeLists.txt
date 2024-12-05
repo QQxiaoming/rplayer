@@ -23,6 +23,7 @@ qt_add_qml_module(${CMAKE_PROJECT_NAME}
         src/qml/TitleLabel.qml
         src/qml/VideoView.qml
         src/qml/VideoPlayer.qml
+        src/qml/MediaOutput.qml
         src/qml/InputView.qml
         src/qml/AboutView.qml
         src/qml/DebugView.qml

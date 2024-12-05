@@ -35,7 +35,6 @@ def generate(data_dir, output, title="", info="", icon_path="", like=-1, star=-1
             item['bookMark'] = bookMark
         else:
             item['bookMark'] = random.randint(0, 1000)
-        item['fullScreen'] = False
         data['list'].append(item)
     
     with open(output, 'w') as f:

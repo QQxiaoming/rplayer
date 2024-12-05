@@ -126,18 +126,18 @@ Item {
         }
     }
 
-    function switchVideo(source, direction, enableFullScreen) {
+    function switchVideo(source, direction) {
         var currentVideoOutput = stackView.currentItem;
         var nextVideoOutput = (currentVideoOutput === videoOutput1) ? videoOutput2 : videoOutput1;
         var nextPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer2 : mediaPlayer1;
         var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
         nextPlayer.source = source;
         nextPlayer.play();
-        buttonFullScreen.visible = enableFullScreen;
         currentPlayer.audioOutput = null;
         nextPlayer.audioOutput = audioOutput;
         stackView.direction = direction;
         stackView.replace(currentVideoOutput, nextVideoOutput);
+        updateMetadata();
     }
 
     function pause() {
@@ -168,11 +168,14 @@ Item {
         var currentPlayer = (currentVideoOutput === videoOutput1) ? mediaPlayer1 : mediaPlayer2;
         if (currentPlayer.metaData) {
             var metaData = currentPlayer.metaData;
-             for (var key of metaData.keys()) {
-                 if (metaData.stringValue(key)) {
-                    console.log(metaData.metaDataKeyToString(key),metaData.stringValue(key));
-                 }
-             }
+            for (var key of metaData.keys()) {
+                if (metaData.metaDataKeyToString(key) === "Resolution") {
+                    var videoWidth = metaData.stringValue(key).split("x")[0];
+                    var videoHeight = metaData.stringValue(key).split("x")[1];
+                    buttonFullScreen.visible = (videoWidth/videoHeight > 1.5);
+                    break;
+                }
+            }
          }
     }
 }

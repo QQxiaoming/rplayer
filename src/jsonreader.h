@@ -102,7 +102,7 @@ public:
                     if(updateObject["info"].toString() == "") {
                         list.removeAt(i);
                     } else {
-                        updateObject["path"] = target;
+                        updateObject["path"] = QJsonValue(target);
                         list[i] = updateObject;
                     }
                     break;

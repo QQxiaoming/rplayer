@@ -14,6 +14,7 @@ Item {
         id: videoOutput
         anchors.fill: parent
         visible: false
+        z: 1
     }
 
     Image {
@@ -25,6 +26,7 @@ Item {
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
         visible: true
+        z: 1
 
         Timer {
             id : timer
@@ -42,12 +44,23 @@ Item {
             }
         }
 
-        function play(source) {
-            imageOutput.sourceList = source;
-            imageOutput.source = source[0];
-            imageOutput.index = 1
-            imageOutput.start = true
-            timer.start();
+        function play() {
+            if (arguments.length === 0) {
+                timer.start();
+            } else if (arguments.length === 1) {
+                var source = arguments[0];
+                imageOutput.sourceList = source;
+                imageOutput.source = source[0];
+                imageOutput.index = 1;
+                imageOutput.start = true;
+                timer.start();
+            } else {
+                console.error("Invalid arguments for play function");
+            }
+        }
+
+        function pause() {
+            timer.stop();
         }
 
         function stop() {

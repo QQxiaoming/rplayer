@@ -16,14 +16,14 @@ def generate(data_dir, output, title="", info="", icon_path="", like=-1, star=-1
         if(len(title)):
             item['title'] = title
         else:
-            item['title'] = file
+            item['title'] = os.path.basename(file_path)
         if(len(info)):
             item['info'] = info
         else:
-            item['info'] = file
+            item['info'] = os.path.basename(file_path)
         item['path'] = 'file://{}'.format(file_path)
         if(len(icon_path)):
-            item['icon'] = 'file://{}'.format(icon_path)
+            item['icon'] = 'file://{}'.format(os.path.abspath(icon_path))
         if(like != -1):
             item['like'] = like
         else:

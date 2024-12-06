@@ -43,7 +43,7 @@ Item {
         }
         onClicked: {
             var currentMediaOutput = stackView.currentItem;
-            var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
+            var currentPlayer = currentMediaOutput.player;
             currentPlayer.videoOutput = videoOutputFull;
             videoOutputFull.visible = true;
             buttonFullScreen.visible = false;
@@ -62,14 +62,17 @@ Item {
 
         MediaOutput {
             id: mediaOutput1
+            property var player: mediaPlayer1
         }
 
         MediaOutput {
             id: mediaOutput2
+            property var player: mediaPlayer2
         }
 
         MediaPlayer {
             id: mediaPlayer1
+            property var output: mediaOutput1
             autoPlay: true
             loops: MediaPlayer.Infinite
             videoOutput: mediaOutput1.videoView
@@ -79,6 +82,7 @@ Item {
 
         MediaPlayer {
             id: mediaPlayer2
+            property var output: mediaOutput2
             autoPlay: true
             loops: MediaPlayer.Infinite
             videoOutput: mediaOutput2.videoView
@@ -129,8 +133,8 @@ Item {
     function switchVideo(type, source, direction) {
         var currentMediaOutput = stackView.currentItem;
         var nextMediaOutput = (currentMediaOutput === mediaOutput1) ? mediaOutput2 : mediaOutput1;
-        var nextPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer2 : mediaPlayer1;
-        var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
+        var nextPlayer = nextMediaOutput.player;
+        var currentPlayer = currentMediaOutput.player;
         if(type === "video") {
             nextMediaOutput.videoView.visible = true;
             nextMediaOutput.imageView.visible = false;
@@ -156,20 +160,22 @@ Item {
 
     function pause() {
         var currentMediaOutput = stackView.currentItem;
-        var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
+        var currentPlayer = currentMediaOutput.player;
         if(currentPlayer.playing) {
             currentPlayer.pause();
+            currentMediaOutput.imageView.pause();
             pauseIcon.visible = true
         } else {
             currentPlayer.play();
+            currentMediaOutput.imageView.play();
             pauseIcon.visible = false
         }
     }
 
     function exitFullScreen() {
         var currentMediaOutput = stackView.currentItem;
-        var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
-        currentPlayer.videoOutput = currentMediaOutput;
+        var currentPlayer = currentMediaOutput.player;
+        currentPlayer.videoOutput = currentMediaOutput.videoView;
         videoOutputFull.visible = false;
         buttonFullScreen.visible = true;
         stackView.visible = true;
@@ -179,7 +185,7 @@ Item {
 
     function updateMetadata() {
         var currentMediaOutput = stackView.currentItem;
-        var currentPlayer = (currentMediaOutput === mediaOutput1) ? mediaPlayer1 : mediaPlayer2;
+        var currentPlayer = currentMediaOutput.player;
         if (currentPlayer.metaData) {
             var metaData = currentPlayer.metaData;
             for (var key of metaData.keys()) {

@@ -28,6 +28,41 @@ Item {
         visible: true
         z: 1
 
+        Rectangle {
+            id: mask
+            width: parent.width-20
+            height: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            color: "transparent"
+
+            Row {
+                Repeater {
+                    model: imageOutput.sourceList.length?imageOutput.sourceList.length:1
+                    Rectangle {
+                        width: mask.width / imageOutput.sourceList.length
+                        height: mask.height
+                        color: "white"
+                        border.color: "black"
+                        radius: 10
+                        z: 2
+                        opacity: index == (imageOutput.index-1) ? 1.0 : 0.3
+                        MultiPointTouchArea {
+                            anchors.fill: parent
+                            onReleased: function(touchPoints) {
+                                if (touchPoints.length === 1) {
+                                    imageOutput.index = index;
+                                    imageOutput.source = imageOutput.sourceList[imageOutput.index];
+                                    imageOutput.index = imageOutput.index + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         Timer {
             id : timer
             interval: 3*1000

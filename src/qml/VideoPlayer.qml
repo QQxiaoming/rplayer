@@ -62,17 +62,18 @@ Item {
 
         MediaOutput {
             id: mediaOutput1
-            property var player: mediaPlayer1
+            property alias player: mediaPlayer1
         }
 
         MediaOutput {
             id: mediaOutput2
-            property var player: mediaPlayer2
+            property alias player: mediaPlayer2
         }
 
         MediaPlayer {
             id: mediaPlayer1
-            property var output: mediaOutput1
+            property alias output: mediaOutput1
+            property alias progressBar: progressBar1
             autoPlay: true
             loops: MediaPlayer.Infinite
             videoOutput: mediaOutput1.videoView
@@ -82,12 +83,41 @@ Item {
 
         MediaPlayer {
             id: mediaPlayer2
-            property var output: mediaOutput2
+            property alias output: mediaOutput2
+            property alias progressBar: progressBar2
             autoPlay: true
             loops: MediaPlayer.Infinite
             videoOutput: mediaOutput2.videoView
             audioOutput: null
             onMetaDataChanged: updateMetadata()
+        }
+
+        Slider {
+            id: progressBar1
+            width: parent.width-20
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            from: 0
+            to: mediaPlayer1.duration
+            value: mediaPlayer1.position
+            visible: false
+            onMoved: {
+                mediaPlayer1.position = value
+            }
+        }
+
+        Slider {
+            id: progressBar2
+            width: parent.width-20
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            from: 0
+            to: mediaPlayer2.duration
+            value: mediaPlayer2.position
+            visible: false
+            onMoved: {
+                mediaPlayer2.position = value
+            }
         }
 
         replaceEnter: Transition {
@@ -138,6 +168,8 @@ Item {
         if(type === "video") {
             nextMediaOutput.videoView.visible = true;
             nextMediaOutput.imageView.visible = false;
+            currentPlayer.progressBar.visible = false;
+            nextPlayer.progressBar.visible = true;
             nextPlayer.source = source;
             nextPlayer.play();
             currentPlayer.audioOutput = null;
@@ -148,6 +180,8 @@ Item {
         } else if(type === "image") {
             nextMediaOutput.imageView.visible = true;
             nextMediaOutput.videoView.visible = false;
+            currentPlayer.progressBar.visible = false;
+            nextPlayer.progressBar.visible = false;
             currentMediaOutput.imageView.stop();
             nextMediaOutput.imageView.play(source);
             currentPlayer.audioOutput = null;

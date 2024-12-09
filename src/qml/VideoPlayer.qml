@@ -48,7 +48,7 @@ Item {
             videoOutputFull.visible = true;
             buttonFullScreen.visible = false;
             stackView.visible = false;
-            pauseIcon.orientation =  videoOutputFull.orientation;
+            pauseIcon.orientation =  videoOutputFull.angle;
             fullScreened(true);
         }
     }
@@ -139,11 +139,16 @@ Item {
     }
 
     VideoOutput {
+        property int angle: -90
+
         id: videoOutputFull
         anchors.fill: parent
         visible: false
         z: 1
-        orientation: -90
+        
+        orientation: Qt.platform.os !== "ios" ? videoOutputFull.angle : 0
+        scale: Qt.platform.os === "ios" ? videoOutputFull.height / videoOutputFull.width : 1
+        rotation: Qt.platform.os === "ios" ? videoOutputFull.angle : 0
     }
 
     Icon {

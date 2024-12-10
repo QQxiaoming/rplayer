@@ -25,7 +25,7 @@ Item {
         id: imageOutput
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
-        visible: true
+        visible: false
         z: 1
 
         Rectangle {
@@ -50,6 +50,7 @@ Item {
                         opacity: index == (imageOutput.index-1) ? 1.0 : 0.3
                         MultiPointTouchArea {
                             anchors.fill: parent
+                            enabled: imageOutput.visible
                             onReleased: function(touchPoints) {
                                 if (touchPoints.length === 1) {
                                     imageOutput.index = index;

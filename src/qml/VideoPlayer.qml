@@ -73,7 +73,6 @@ Item {
         MediaPlayer {
             id: mediaPlayer1
             property alias output: mediaOutput1
-            property alias progressBar: progressBar1
             autoPlay: true
             loops: MediaPlayer.Infinite
             videoOutput: mediaOutput1.videoView
@@ -84,7 +83,6 @@ Item {
         MediaPlayer {
             id: mediaPlayer2
             property alias output: mediaOutput2
-            property alias progressBar: progressBar2
             autoPlay: true
             loops: MediaPlayer.Infinite
             videoOutput: mediaOutput2.videoView
@@ -93,30 +91,38 @@ Item {
         }
 
         Slider {
-            id: progressBar1
+            property var player: mediaPlayer1
+            id: progressBar
             width: parent.width-20
+            height: 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             from: 0
-            to: mediaPlayer1.duration
-            value: mediaPlayer1.position
+            to: player.duration
+            value: player.position
             visible: false
             onMoved: {
-                mediaPlayer1.position = value
+                player.position = value
             }
-        }
-
-        Slider {
-            id: progressBar2
-            width: parent.width-20
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-            from: 0
-            to: mediaPlayer2.duration
-            value: mediaPlayer2.position
-            visible: false
-            onMoved: {
-                mediaPlayer2.position = value
+            background: Rectangle {
+                y: parent.topPadding + parent.availableHeight / 2 - height / 2
+                width: parent.availableWidth
+                height: parent.height / 5
+                color: "gray"
+                Rectangle {
+                    width: parent.width *  parent.parent.visualPosition
+                    height: parent.height
+                    color: "white"
+                }
+            }
+            handle: Rectangle {
+                x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
+                y: parent.topPadding + parent.availableHeight / 2 - height / 2
+                width: parent.height
+                height: parent.height
+                radius: parent.height / 2
+                color: "white"
+                border.color: parent.pressed ? "black" : "white"
             }
         }
 
@@ -173,8 +179,9 @@ Item {
         if(type === "video") {
             nextMediaOutput.videoView.visible = true;
             nextMediaOutput.imageView.visible = false;
-            currentPlayer.progressBar.visible = false;
-            nextPlayer.progressBar.visible = true;
+            progressBar.enabled = true;
+            progressBar.visible = true;
+            progressBar.player = nextPlayer;
             nextPlayer.source = source;
             nextPlayer.play();
             currentPlayer.audioOutput = null;
@@ -185,8 +192,8 @@ Item {
         } else if(type === "image") {
             nextMediaOutput.imageView.visible = true;
             nextMediaOutput.videoView.visible = false;
-            currentPlayer.progressBar.visible = false;
-            nextPlayer.progressBar.visible = false;
+            progressBar.visible = false;
+            progressBar.enabled = false;
             currentMediaOutput.imageView.stop();
             nextMediaOutput.imageView.play(source);
             currentPlayer.audioOutput = null;

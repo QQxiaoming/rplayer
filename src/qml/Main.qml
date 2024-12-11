@@ -96,9 +96,13 @@ Window {
 
     VideoView {
         id: videoView
-        onShowInfoDialog: function(info) {
-            infoDialog.text = info;
+        onShowInfoDialog: function(title,info) {
+            infoDialog.setInfo(title,info);
             stackView.push(infoDialog);
+        }
+        onShowCommentDialog: function(Comments) {
+            commentDialog.setComment(Comments);
+            stackView.push(commentDialog);
         }
     }
 
@@ -109,7 +113,7 @@ Window {
             stackView.pop();
             videoView.readJsonUrl(inputView.inputText);
             var datetime = new Date();
-            debugView.text = debugView.text + datetime.toLocaleString() + " - " + inputView.inputText + "\n";
+            debugView.addlog(datetime.toLocaleString() + " - " + inputView.inputText);
         }
         onRejected: {
             stackView.pop();
@@ -120,19 +124,26 @@ Window {
         id: aboutView
         visible: false
     }
-    
+
+    CommentView {
+        id: commentDialog
+        visible: false
+        onAccepted: function(list){
+            videoView.updateVideoComment(list);
+            stackView.pop();
+        }
+    }
+
     DebugView {
         id: debugView
         visible: false
         wrapMode: TextEdit.Wrap
     }
 
-    DebugView {
+    InfoView {
         id: infoDialog
-        readOnly: false
-        visible: false
-        onAccepted: function(str){
-            videoView.updateVideoInfo(str);
+        onAccepted: function(title,info){
+            videoView.updateVideoInfo(title,info);
             stackView.pop();
         }
     }
@@ -144,12 +155,12 @@ Window {
     Component.onCompleted: {
         console.log("start app...");
         var list = audioDevices.audioOutputs;
-        debugView.text = debugView.text + "audioOutputs" + "\n";
+        debugView.addlog(debugView.text + "audioOutputs");
         for (var i of list) {
-            debugView.text = debugView.text + i + "\n";
+            debugView.addlog(i+"");
         }
-        debugView.text = debugView.text + "defaultAudioOutput" + "\n";
-        debugView.text = debugView.text + audioDevices.defaultAudioOutput + "\n";
+        debugView.addlog("defaultAudioOutput");
+        debugView.addlog(audioDevices.defaultAudioOutput+"");
     }
 
     FileDialog {
@@ -160,7 +171,7 @@ Window {
         onAccepted: {
             videoView.readJsonUrl(jsonFileDialog.selectedFile);
             var datetime = new Date();
-            debugView.text = debugView.text + datetime.toLocaleString() + " - " + jsonFileDialog.selectedFile + "\n";
+            debugView.addlog(datetime.toLocaleString() + " - " + jsonFileDialog.selectedFile);
         }
     }
 
@@ -173,7 +184,7 @@ Window {
             var json = "{\"list\":[{\"path\":\"" + videoFileDialog.selectedFile + "\",\"title\":\"调试\",\"info\":\"调试\"}]}";
             videoView.readJsonUrl(json);
             var datetime = new Date();
-            debugView.text = debugView.text + datetime.toLocaleString() + " - " + videoFileDialog.selectedFile + "\n";
+            debugView.addlog(datetime.toLocaleString() + " - " + videoFileDialog.selectedFile);
         }
     }
 

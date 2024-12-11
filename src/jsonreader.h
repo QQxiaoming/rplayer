@@ -97,23 +97,61 @@ public:
             QJsonArray list = obj["list"].toArray();
             for(int i = 0; i < list.size(); i++) {
                 QJsonObject item = list[i].toObject();
-                QString target = item["path"].toString();
-                if(target.replace("{JSON_PATH}", fileInfo.absolutePath().toUtf8()) == updateObject["path"].toString()) {
-                    if(updateObject["info"].toString() == "") {
-                        list.removeAt(i);
-                    } else {
-                        updateObject["path"] = QJsonValue(target);
-                        list[i] = updateObject;
+                if(item["path"].isString() && updateObject["path"].isString()) {
+                    QString target = item["path"].toString();
+                    if(target.replace("{JSON_PATH}", fileInfo.absolutePath().toUtf8()) == updateObject["path"].toString()) {
+                        if(updateObject["info"].toString() == "") {
+                            list.removeAt(i);
+                        } else {
+                            updateObject["path"] = QJsonValue(target);
+                            list[i] = updateObject;
+                        }
+                        break;
                     }
-                    break;
-                }
-                if(target == updateObject["path"].toString()) {
-                    if(updateObject["info"].toString() == "") {
-                        list.removeAt(i);
-                    } else {
-                        list[i] = updateObject;
+                    if(target == updateObject["path"].toString()) {
+                        if(updateObject["info"].toString() == "") {
+                            list.removeAt(i);
+                        } else {
+                            list[i] = updateObject;
+                        }
+                        break;
                     }
-                    break;
+                } else if(item["path"].isArray() && updateObject["path"].isArray()) {
+                    QJsonArray target = item["path"].toArray();
+                    QJsonArray update = updateObject["path"].toArray();
+                    if(target.size() == update.size()) {
+                        bool isSame1 = true;
+                        for(int j = 0; j < target.size(); j++) {
+                            if(target[j].toString().replace("{JSON_PATH}", fileInfo.absolutePath().toUtf8()) != update[j].toString()) {
+                                isSame1 = false;
+                                break;
+                            }
+                        }
+                        if(isSame1) {
+                            if(updateObject["info"].toString() == "") {
+                                list.removeAt(i);
+                            } else {
+                                updateObject["path"] = QJsonValue(target);
+                                list[i] = updateObject;
+                            }
+                            break;
+                        }
+                        bool isSame2 = true;
+                        for(int j = 0; j < target.size(); j++) {
+                            if(target[j].toString() != update[j].toString()) {
+                                isSame2 = false;
+                                break;
+                            }
+                        }
+                        if(isSame2) {
+                            if(updateObject["info"].toString() == "") {
+                                list.removeAt(i);
+                            } else {
+                                list[i] = updateObject;
+                            }
+                            break;
+                        }
+                    }
                 }
             }
             obj["list"] = list;

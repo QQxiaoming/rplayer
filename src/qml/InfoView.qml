@@ -5,10 +5,7 @@ Item {
     implicitHeight : 1920
     implicitWidth : 1080
 
-    property bool readOnly: true
-    property int wrapMode: TextEdit.WordWrap
-
-    signal accepted(var str)
+    signal accepted(var title, var info)
 
     Rectangle {
         id: rectangle
@@ -38,9 +35,9 @@ Item {
                     text: str
                     horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignTop
-                    wrapMode: rectangle.parent.wrapMode
+                    wrapMode: TextEdit.WordWrap
                     mouseSelectionMode: TextInput.SelectWords
-                    readOnly: rectangle.parent.readOnly
+                    readOnly: false
                 }
             }
         }
@@ -52,24 +49,22 @@ Item {
             anchors.topMargin: 100
             anchors.right: parent.right
             anchors.rightMargin: 50
-            visible: !rectangle.parent.readOnly
+            visible: true
             z: 1
             enableHover: true
             hoveredColor: "#1abc9c"
             codePoint: "0xf044"
             onClicked: {
                 if(inputModel.count) {
-                    rectangle.parent.accepted(inputList.itemAtIndex(0).text);
+                    rectangle.parent.accepted(inputList.itemAtIndex(0).text,inputList.itemAtIndex(1).text);
                 }
             }
         }
     }
 
-    function addlog(str) {
-        inputModel.append({"str": str});
-    }
-
-    function cleanlog() {
+    function setInfo(title,info) {
         inputModel.clear();
+        inputModel.append({"str": title});
+        inputModel.append({"str": info});
     }
 }

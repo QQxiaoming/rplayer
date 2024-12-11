@@ -12,7 +12,8 @@ Item {
     property string jsonUrl: ""
     property var parsedData: []
 
-    signal showInfoDialog(var info)
+    signal showInfoDialog(var title, var info)
+    signal showCommentDialog(var info)
 
     function readJsonUrl(url) {
         var jsonData = jsonReader.readJsonUrl(url);
@@ -34,10 +35,19 @@ Item {
         }
     }
 
-    function updateVideoInfo(str) {
+    function updateVideoInfo(title,info) {
         if(parsedData.length) {
-            videoInfo.text = str;
-            parsedData[currentIndex].info = str;
+            videoTitle.text = title;
+            videoInfo.text = info;
+            parsedData[currentIndex].info = info;
+            parsedData[currentIndex].title = title;
+            updateJsonUrl(currentIndex);
+        }
+    }
+
+    function updateVideoComment(list) {
+        if(parsedData.length) {
+            parsedData[currentIndex].comment = list;
             updateJsonUrl(currentIndex);
         }
     }
@@ -245,7 +255,47 @@ Item {
             }
             onClicked: {
                 if(parsedData.length) {
-                    videoView.parent.showInfoDialog(parsedData[currentIndex].info);
+                    videoView.parent.showInfoDialog(parsedData[currentIndex].title,parsedData[currentIndex].info);
+                }
+            }
+        }
+
+        Icon {
+            id: contentIcon
+            radius: 50
+            anchors.right: infoIcon.right
+            anchors.rightMargin: 0
+            anchors.bottom: infoIcon.top
+            anchors.bottomMargin: 50
+            z: 1
+            codePoint: "0xf27b"
+            enableHover: true
+            hoveredColor: "#e066ea"
+            borderWidth : 0
+            Rectangle {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.bottom
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                anchors.topMargin: 4
+                color: "transparent"
+                Label {
+                    anchors.fill: parent
+                    text: "评论"
+                    color: "white"
+                    font.pixelSize: 40
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    style: Text.Outline
+                    styleColor: "black"
+                    font.capitalization: Font.Capitalize
+                }
+            }
+            onClicked: {
+                if(parsedData.length) {
+                    videoView.parent.showCommentDialog(parsedData[currentIndex].comment);
                 }
             }
         }
@@ -255,7 +305,7 @@ Item {
             radius: 50
             anchors.right: infoIcon.right
             anchors.rightMargin: 0
-            anchors.bottom: infoIcon.top
+            anchors.bottom: contentIcon.top
             anchors.bottomMargin: 50
             z: 1
             codePoint: "0xf004"

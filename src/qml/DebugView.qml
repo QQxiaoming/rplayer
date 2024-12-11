@@ -5,9 +5,8 @@ Item {
     implicitHeight : 1920
     implicitWidth : 1080
 
-    property alias readOnly: input.readOnly
-    property alias text: input.text
-    property alias wrapMode: input.wrapMode
+    property bool readOnly: true
+    property int wrapMode: TextEdit.WordWrap
 
     signal accepted(var str)
 
@@ -16,8 +15,7 @@ Item {
         anchors.fill: parent
         color: "black"
 
-        Flickable {
-            id: inputFlickable
+        ScrollView {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
@@ -26,20 +24,24 @@ Item {
             anchors.rightMargin: 0
             anchors.topMargin: 100
             anchors.bottomMargin: 120
-            contentWidth: input.width
-            contentHeight: input.height
 
-            TextEdit {
-                id: input
-                width:1080
-                height:20000
-                color: "white"
-                font.pixelSize: 40
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignTop
-                wrapMode: TextEdit.WordWrap
-                mouseSelectionMode: TextInput.SelectWords
-                readOnly: true
+            ListView {
+                id : inputList
+                width: rectangle.parent.width
+                model: ListModel {
+                    id : inputModel
+                }
+                delegate: TextEdit {
+                    width: rectangle.parent.width
+                    color: "white"
+                    font.pixelSize: 40
+                    text: str
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignTop
+                    wrapMode: rectangle.parent.wrapMode
+                    mouseSelectionMode: TextInput.SelectWords
+                    readOnly: rectangle.parent.readOnly
+                }
             }
         }
 
@@ -50,14 +52,24 @@ Item {
             anchors.topMargin: 100
             anchors.right: parent.right
             anchors.rightMargin: 50
-            visible: !input.readOnly
+            visible: !rectangle.parent.readOnly
             z: 1
             enableHover: true
             hoveredColor: "#1abc9c"
             codePoint: "0xf044"
             onClicked: {
-                rectangle.parent.accepted(input.text);
+                if(inputModel.count) {
+                    rectangle.parent.accepted(inputList.itemAtIndex(0).text);
+                }
             }
         }
+    }
+
+    function addlog(str) {
+        inputModel.append({"str": str});
+    }
+
+    function cleanlog() {
+        inputModel.clear();
     }
 }

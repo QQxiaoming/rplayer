@@ -28,54 +28,12 @@ Item {
                 model: ListModel {
                     id : inputModel
                 }
-                delegate: Rectangle {
-                    property alias itemIcon: iconId.sourceStr
-                    property alias itemName: nameId.text
-                    property alias itemContent: contentId.text
-                    Icon {
-                        id: iconId
-                        property string sourceStr: icon
-                        anchors.top: parent.top
-                        anchors.topMargin: 200*index
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        radius: 40
-                        enablePressAnimation: false
-                        holdHovered: true
-                        source: icon
-                    }
-                    TextEdit {
-                        id: nameId
-                        anchors.top: iconId.top
-                        anchors.topMargin: 0
-                        anchors.left: iconId.left
-                        anchors.leftMargin: iconId.width + 10
-                        width: rectangle.parent.width - iconId.width - 10
-                        color: "white"
-                        text: name
-                        wrapMode: TextEdit.WordWrap
-                        horizontalAlignment: Text.AlignLeft
-                        verticalAlignment: Text.AlignTop
-                        mouseSelectionMode: TextInput.SelectWords
-                        font.pixelSize: 70
-                        readOnly: false
-                    }
-                    TextEdit {
-                        id: contentId
-                        anchors.top: iconId.bottom
-                        anchors.topMargin: 20
-                        anchors.left: iconId.left
-                        anchors.leftMargin: 0
-                        width: rectangle.parent.width
-                        color: "white"
-                        text: content
-                        font.pixelSize: 40
-                        horizontalAlignment: Text.AlignLeft
-                        verticalAlignment: Text.AlignTop
-                        wrapMode: TextEdit.WordWrap
-                        mouseSelectionMode: TextInput.SelectWords
-                        readOnly: false
-                    }
+                spacing: 10
+                delegate: CommentItem {
+                    width: rectangle.parent.width
+                    inputIcon: icon
+                    inputName: name
+                    inputContent: content
                 }
             }
         }

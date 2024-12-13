@@ -29,6 +29,7 @@ qt_add_qml_module(${CMAKE_PROJECT_NAME}
         src/qml/DebugView.qml
         src/qml/InfoView.qml
         src/qml/CommentView.qml
+        src/qml/CommentItem.qml
     SOURCES 
         src/jsonreader.h 
         src/fonticon.h 

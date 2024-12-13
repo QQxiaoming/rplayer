@@ -31,6 +31,7 @@ Item {
                 model: ListModel {
                     id : inputModel
                 }
+                spacing: 10
                 delegate: TextEdit {
                     width: rectangle.parent.width
                     color: "white"

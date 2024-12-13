@@ -22,23 +22,73 @@ Item {
             anchors.topMargin: 100
             anchors.bottomMargin: 120
 
-            ListView {
-                id : inputList
-                width: rectangle.parent.width
-                model: ListModel {
-                    id : inputModel
-                }
-                delegate: TextEdit {
-                    width: rectangle.parent.width
+            Label {
+                id: titleLabel
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                width: 120
+                height : 80
+                Text {
+                    anchors.fill: parent
+                    font.pixelSize: 70
+                    style: Text.Outline
                     color: "white"
-                    font.pixelSize: 40
-                    text: str
-                    horizontalAlignment: Text.AlignLeft
-                    verticalAlignment: Text.AlignTop
-                    wrapMode: TextEdit.WordWrap
-                    mouseSelectionMode: TextInput.SelectWords
-                    readOnly: false
+                    styleColor: "black"
+                    text: "标题"
                 }
+            }
+
+            TextInput {
+                id: titleText
+                anchors.top: titleLabel.top
+                anchors.topMargin: 0
+                anchors.left: titleLabel.right
+                anchors.leftMargin: 40
+                width: rectangle.parent.width - titleLabel.width - 40
+                color: "white"
+                font.pixelSize: 70
+                maximumLength: 160
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignTop
+                wrapMode: TextEdit.NoWrap
+                mouseSelectionMode: TextInput.SelectWords
+                readOnly: false
+            }
+
+            Label {
+                id: infoLabel
+                anchors.top: titleLabel.bottom
+                anchors.topMargin: 20
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                width: 120
+                height : 80
+                Text {
+                    anchors.fill: parent
+                    font.pixelSize: 70
+                    style: Text.Outline
+                    color: "white"
+                    styleColor: "black"
+                    text: "简介"
+                }
+            }
+
+            TextEdit {
+                id: infoText
+                anchors.top: infoLabel.top
+                anchors.topMargin: 30
+                anchors.left: infoLabel.right
+                anchors.leftMargin: 40
+                width: rectangle.parent.width - infoLabel.width - 40
+                color: "white"
+                font.pixelSize: 40
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignTop
+                wrapMode: TextEdit.WordWrap
+                mouseSelectionMode: TextInput.SelectWords
+                readOnly: false
             }
         }
 
@@ -55,16 +105,13 @@ Item {
             hoveredColor: "#1abc9c"
             codePoint: "0xf044"
             onClicked: {
-                if(inputModel.count) {
-                    rectangle.parent.accepted(inputList.itemAtIndex(0).text,inputList.itemAtIndex(1).text);
-                }
+                rectangle.parent.accepted(titleText.text,infoText.text);
             }
         }
     }
 
     function setInfo(title,info) {
-        inputModel.clear();
-        inputModel.append({"str": title});
-        inputModel.append({"str": info});
+        titleText.text = title;
+        infoText.text = info;
     }
 }

@@ -142,6 +142,7 @@ Window {
 
     InfoView {
         id: infoDialog
+        visible: false
         onAccepted: function(title,info){
             videoView.updateVideoInfo(title,info);
             stackView.pop();

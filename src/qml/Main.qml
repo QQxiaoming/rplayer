@@ -20,6 +20,7 @@ Window {
 
         ToolButton {
             id: toolButton
+            anchors.left: parent.left
             contentItem: Text {
                 id: toolButtonText
                 text: stackView.depth > 1 ? "\u25C0" : "\u2630"
@@ -83,6 +84,22 @@ Window {
             }
         }
 
+        ToolButton {
+            id: toolButton2
+            anchors.right: parent.right
+            contentItem: Text {
+                id: toolButtonText2
+                text: "🔍"
+                color: "white"
+                font: parent.font
+                style: Text.Outline
+                styleColor: "black"
+            }
+            background: Rectangle {
+                color: toolButton2.pressed ? "gray" : toolButton2.hovered ? "gray" : "transparent"
+            }
+        }
+
         background: Rectangle {
             color: "transparent"
         }
@@ -103,6 +120,9 @@ Window {
         onShowCommentDialog: function(Comments) {
             commentDialog.setComment(Comments);
             stackView.push(commentDialog);
+        }
+        onFullScreened: function(fullScreen) {
+            toolBar.visible = !fullScreen;
         }
     }
 

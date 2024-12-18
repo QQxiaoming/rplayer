@@ -14,6 +14,7 @@ Item {
 
     signal showInfoDialog(var title, var info)
     signal showCommentDialog(var info)
+    signal fullScreened(var enable)
 
     function readJsonUrl(url) {
         var jsonData = jsonReader.readJsonUrl(url);
@@ -106,6 +107,7 @@ Item {
         likeIcon.visible = enable;
         bookMarkIcon.visible = enable;
         starIcon.visible = enable;
+        contentIcon.visible = enable;
         infoIcon.visible = enable;
         videoTitleLabel.visible = enable;
         videoInfoLabel.visible = enable;
@@ -126,6 +128,7 @@ Item {
             z: 1
             onFullScreened: function(fullScreen) {
                 hideUI(!fullScreen);
+                videoView.parent.fullScreened(fullScreen);
             }
         }
 
@@ -464,7 +467,7 @@ Item {
                             return;
                         }
                         if(videoPlayer.fullScreen) {
-                            if (touchPoint.x - touchPoint.startX > slideThreshold) {
+                            if (touchPoint.startX - touchPoint.x > slideThreshold) {
                                 videoPlayer.exitFullScreen();
                                 return;
                             }

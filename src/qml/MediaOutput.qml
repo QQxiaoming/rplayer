@@ -80,6 +80,27 @@ Item {
             }
         }
 
+        function next(direction) {
+            if(start && imageOutput.sourceList.length) {
+                var list = imageOutput.sourceList;
+                if(direction) {
+                    if(imageOutput.index >= list.length) {
+                        imageOutput.index = 0;
+                    }
+                    imageOutput.source = list[imageOutput.index];
+                    imageOutput.index = imageOutput.index + 1;
+                } else {
+                    if(imageOutput.index - 2 < 0) {
+                        imageOutput.index = list.length-1;
+                    } else {
+                        imageOutput.index = imageOutput.index - 2;
+                    }
+                    imageOutput.source = list[imageOutput.index];
+                    imageOutput.index = imageOutput.index + 1;
+                }
+            }
+        }
+
         function play() {
             if (arguments.length === 0) {
                 timer.start();

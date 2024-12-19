@@ -485,6 +485,12 @@ Item {
                                 currentIndex = (currentIndex - 1 + parsedData.length) % parsedData.length;
                                 refreshVideo(false);
                                 return;
+                            } else if (touchPoint.startX - touchPoint.x > slideThreshold) {
+                                videoPlayer.switchImage(true);
+                                return;
+                            } else if (touchPoint.x - touchPoint.startX > slideThreshold) {
+                                videoPlayer.switchImage(false);
+                                return;
                             }
                         }
                     }

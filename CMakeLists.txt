@@ -83,7 +83,7 @@ endif()
 
 ## iOS
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
-    set(QT_DEFAULT_MEDIA_BACKEND "darwin")
+    #set(QT_DEFAULT_MEDIA_BACKEND "darwin")
     qt_add_ios_ffmpeg_libraries(${CMAKE_PROJECT_NAME})
     set(CMAKE_OSX_ARCHITECTURES "arm64")
     set(CMAKE_OSX_SYSROOT "iphoneos")

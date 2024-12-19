@@ -94,9 +94,9 @@ Item {
             property var player: mediaPlayer1
             id: progressBar
             width: parent.width-20
-            height: 30
+            height: pressed ? 60 : 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
+            anchors.bottomMargin: pressed ? 15 : 30
             from: 0
             to: player.duration
             value: player.position
@@ -118,9 +118,9 @@ Item {
             handle: Rectangle {
                 x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
                 y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                width: parent.height
-                height: parent.height
-                radius: parent.height / 2
+                width: parent.height / 2
+                height: width
+                radius: width / 2
                 color: "white"
                 border.color: parent.pressed ? "black" : "white"
             }
@@ -156,40 +156,43 @@ Item {
         scale: Qt.platform.os === "ios" ? videoOutputFull.height / videoOutputFull.width : 1
         rotation: Qt.platform.os === "ios" ? videoOutputFull.angle : 0
 
-        Slider {
-            property var player: mediaPlayer1
-            id: progressBarFull
-            width: 30
-            height: parent.height-20
-            anchors.right: parent.right
-            anchors.rightMargin: 30
-            from: 0
-            to: player.duration
-            value: player.position
-            orientation: Qt.Vertical
-            onMoved: {
-                player.position = value
-            }
-            background: Rectangle {
-                x: parent.leftPadding + parent.availableWidth / 2 - width / 2
-                height: parent.availableHeight
-                width: parent.width / 5
-                color: "white"
-                Rectangle {
-                    height: parent.height * parent.parent.visualPosition
-                    width: parent.width
-                    color: "gray"
-                }
-            }
-            handle: Rectangle {
-                y: parent.topPadding + parent.visualPosition * (parent.availableHeight - height)
-                x: parent.leftPadding + parent.availableWidth / 2 - width / 2
+    }
+
+    Slider {
+        property var player: mediaPlayer1
+        id: progressBarFull
+        width: pressed ? 60 : 30
+        height: parent.height-20
+        anchors.right: parent.right
+        anchors.rightMargin: pressed ? 15 : 30
+        from: 0
+        to: player.duration
+        value: player.position
+        visible: videoOutputFull.visible
+        z: 1
+        orientation: Qt.Vertical
+        onMoved: {
+            player.position = value
+        }
+        background: Rectangle {
+            x: parent.leftPadding + parent.availableWidth / 2 - width / 2
+            height: parent.availableHeight
+            width: parent.width / 5
+            color: "white"
+            Rectangle {
+                height: parent.height * parent.parent.visualPosition
                 width: parent.width
-                height: parent.width
-                radius: parent.width / 2
-                color: "white"
-                border.color: parent.pressed ? "black" : "white"
+                color: "gray"
             }
+        }
+        handle: Rectangle {
+            y: parent.topPadding + parent.visualPosition * (parent.availableHeight - height)
+            x: parent.leftPadding + parent.availableWidth / 2 - width / 2
+            width: parent.width / 2
+            height: width
+            radius: width / 2
+            color: "white"
+            border.color: parent.pressed ? "black" : "white"
         }
     }
 
@@ -219,7 +222,6 @@ Item {
             progressBar.visible = true;
             progressBar.player = nextPlayer;
             progressBarFull.enabled = true;
-            progressBarFull.visible = true;
             progressBarFull.player = nextPlayer;
             nextPlayer.source = source;
             nextPlayer.play();
@@ -233,7 +235,6 @@ Item {
             nextMediaOutput.videoView.visible = false;
             progressBar.visible = false;
             progressBar.enabled = false;
-            progressBarFull.visible = false;
             progressBarFull.enabled = false;
             currentMediaOutput.imageView.stop();
             nextMediaOutput.imageView.play(source);
@@ -242,6 +243,13 @@ Item {
             stackView.direction = direction;
             stackView.replace(currentMediaOutput, nextMediaOutput);
             buttonFullScreen.visible = false;
+        }
+    }
+
+    function switchImage(next) {
+        var currentMediaOutput = stackView.currentItem;
+        if(currentMediaOutput.imageView.visible) {
+            currentMediaOutput.imageView.next(next);
         }
     }
 

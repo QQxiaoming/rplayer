@@ -94,9 +94,9 @@ Item {
             property var player: mediaPlayer1
             id: progressBar
             width: parent.width-20
-            height: pressed ? 60 : 30
+            height: pressed || hovered ? 60 : 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: pressed ? 15 : 30
+            anchors.bottomMargin: pressed || hovered ? 15 : 30
             from: 0
             to: player.duration
             value: player.position
@@ -161,10 +161,10 @@ Item {
     Slider {
         property var player: mediaPlayer1
         id: progressBarFull
-        width: pressed ? 60 : 30
+        width: pressed || hovered ? 60 : 30
         height: parent.height-20
         anchors.right: parent.right
-        anchors.rightMargin: pressed ? 15 : 30
+        anchors.rightMargin: pressed || hovered ? 15 : 30
         from: 0
         to: player.duration
         value: player.position
@@ -223,7 +223,7 @@ Item {
             progressBar.player = nextPlayer;
             progressBarFull.enabled = true;
             progressBarFull.player = nextPlayer;
-            nextPlayer.source = source;
+            nextPlayer.source = source.path;
             nextPlayer.play();
             currentPlayer.audioOutput = null;
             nextPlayer.audioOutput = audioOutput;
@@ -237,9 +237,16 @@ Item {
             progressBar.enabled = false;
             progressBarFull.enabled = false;
             currentMediaOutput.imageView.stop();
-            nextMediaOutput.imageView.play(source);
-            currentPlayer.audioOutput = null;
-            nextPlayer.audioOutput = null;
+            nextMediaOutput.imageView.play(source.path);
+            if(typeof source.audio === "undefined") {
+                currentPlayer.audioOutput = null;
+                nextPlayer.audioOutput = null;
+            } else {
+                nextPlayer.source = source.audio;
+                nextPlayer.play();
+                currentPlayer.audioOutput = null;
+                nextPlayer.audioOutput = audioOutput;
+            }
             stackView.direction = direction;
             stackView.replace(currentMediaOutput, nextMediaOutput);
             buttonFullScreen.visible = false;

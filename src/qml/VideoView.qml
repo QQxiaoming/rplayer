@@ -56,9 +56,9 @@ Item {
     function refreshVideo(direction) {
         var video = parsedData[currentIndex];
         if(typeof video.type === "undefined") {
-            videoPlayer.switchVideo("video",video.path,direction);
+            videoPlayer.switchVideo("video",{"path": video.path, "audio": null},direction);
         } else {
-            videoPlayer.switchVideo(video.type,video.path,direction);
+            videoPlayer.switchVideo(video.type,{"path": video.path, "audio": video.audio},direction);
         }
         videoTitle.text = video.title;
         videoInfo.text = video.info;

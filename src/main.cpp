@@ -3,54 +3,9 @@
 #include <QQmlContext>
 #include <QQuickWindow>
 #include <QtEnvironmentVariables>
-#if QT_CONFIG(permissions)
-#include <QPermissions>
-#endif
 
 #include "jsonreader.h"
 #include "fonticon.h"
-
-void checkCameraPermission(void) {
-#if QT_CONFIG(permissions)
-    QCameraPermission cameraPermission;
-    switch (qApp->checkPermission(cameraPermission)) {
-        case Qt::PermissionStatus::Undetermined:
-            qApp->requestPermission(cameraPermission, qApp, &checkCameraPermission);
-            return;
-        case Qt::PermissionStatus::Denied:
-            qDebug() << "Camera permission is not granted!";
-            return;
-        case Qt::PermissionStatus::Granted:
-            qDebug() << "Camera permission is granted!";
-            break;
-    }
-#endif
-}
-
-bool checkAuthorizationStatus(bool block) {
-    bool ret = false;
-#if QT_CONFIG(permissions)
-    QCameraPermission cameraPermission;
-    Qt::PermissionStatus auth_status = Qt::PermissionStatus::Undetermined;
-    while(true) {
-        QThread::msleep(1);
-        auth_status = qApp->checkPermission(cameraPermission);
-        if(auth_status == Qt::PermissionStatus::Denied) {
-            if(!block) {
-                return ret;
-            }
-        } else if(auth_status == Qt::PermissionStatus::Granted) {
-            ret = true;
-            break;
-        } else if(auth_status == Qt::PermissionStatus::Undetermined)
-            continue;
-        break;
-    }
-#else
-    ret = true;
-#endif
-    return ret;
-}
 
 int main(int argc, char *argv[])
 {
@@ -88,9 +43,6 @@ int main(int argc, char *argv[])
         window->resize(QSize(1080, 1920));
     }
 #endif
-
-    checkCameraPermission();
-    checkAuthorizationStatus(true);
 
     return app.exec();
 }

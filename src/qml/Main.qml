@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
-import QtMultimedia
 
 Window {
     id: root
@@ -169,19 +168,8 @@ Window {
         }
     }
 
-    MediaDevices {
-        id: audioDevices
-    }
-
     Component.onCompleted: {
         console.log("start app...");
-        var list = audioDevices.audioOutputs;
-        debugView.addlog(debugView.text + "audioOutputs");
-        for (var i of list) {
-            debugView.addlog(i+"");
-        }
-        debugView.addlog("defaultAudioOutput");
-        debugView.addlog(audioDevices.defaultAudioOutput+"");
     }
 
     FileDialog {

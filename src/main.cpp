@@ -4,7 +4,7 @@
 #include <QQuickWindow>
 #include <QtEnvironmentVariables>
 
-#include "jsonreader.h"
+#include "rplayerdatareader.h"
 #include "fonticon.h"
 
 int main(int argc, char *argv[])
@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    JsonReader jsonReader;
-    engine.rootContext()->setContextProperty("jsonReader", &jsonReader);
+    RPlayerDataReader rPlayerDataReader;
+    engine.rootContext()->setContextProperty("rPlayerDataReader", &rPlayerDataReader);
     FontIcon fontIcon;
     engine.rootContext()->setContextProperty("fontIcon", &fontIcon);
 

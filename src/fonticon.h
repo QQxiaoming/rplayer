@@ -39,4 +39,4 @@ public:
     }
 };
 
-#endif // JSONREADER_H
+#endif // RPLAYERDATAREADER_H

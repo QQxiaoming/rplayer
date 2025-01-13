@@ -1,5 +1,5 @@
-#ifndef JSONREADER_H
-#define JSONREADER_H
+#ifndef RPLAYERDATAREADER_H
+#define RPLAYERDATAREADER_H
 
 #include <QObject>
 #include <QJsonDocument>
@@ -14,10 +14,10 @@
 #include <QEventLoop>
 #include <QDebug>
 
-class JsonReader : public QObject {
+class RPlayerDataReader : public QObject {
     Q_OBJECT
 public:
-    explicit JsonReader(QObject *parent = nullptr) : QObject(parent) {}
+    explicit RPlayerDataReader(QObject *parent = nullptr) : QObject(parent) {}
 
     Q_INVOKABLE QVariantMap readJsonUrl(const QString &filePath) {
         QUrl url(filePath);
@@ -178,4 +178,4 @@ public:
     }
 };
 
-#endif // JSONREADER_H
+#endif // RPLAYERDATAREADER_H

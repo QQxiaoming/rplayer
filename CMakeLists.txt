@@ -28,10 +28,11 @@ qt_add_qml_module(${CMAKE_PROJECT_NAME}
         src/qml/AboutView.qml
         src/qml/DebugView.qml
         src/qml/InfoView.qml
+        src/qml/UserInfoView.qml
         src/qml/CommentView.qml
         src/qml/CommentItem.qml
     SOURCES 
-        src/jsonreader.h 
+        src/rplayerdatareader.h 
         src/fonticon.h 
         lib/QFontIcon/qfonticon.cpp 
         lib/QFontIcon/qfonticon.h

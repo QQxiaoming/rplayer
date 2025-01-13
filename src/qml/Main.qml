@@ -116,6 +116,10 @@ Window {
             infoDialog.setInfo(title,info);
             stackView.push(infoDialog);
         }
+        onShowUserInfoDialog: function(info) {
+            userInfoDialog.setInfo(info);
+            stackView.push(userInfoDialog);
+        }
         onShowCommentDialog: function(Comments) {
             commentDialog.setComment(Comments);
             stackView.push(commentDialog);
@@ -166,6 +170,11 @@ Window {
             videoView.updateVideoInfo(title,info);
             stackView.pop();
         }
+    }
+
+    UserInfoView {
+        id: userInfoDialog
+        visible: false
     }
 
     Component.onCompleted: {

@@ -13,11 +13,12 @@ Item {
     property var parsedData: []
 
     signal showInfoDialog(var title, var info)
+    signal showUserInfoDialog(var info)
     signal showCommentDialog(var info)
     signal fullScreened(var enable)
 
     function readJsonUrl(url) {
-        var jsonData = jsonReader.readJsonUrl(url);
+        var jsonData = rPlayerDataReader.readJsonUrl(url);
         if (jsonData && jsonData.list) {
             parsedData = Object.values(jsonData.list);
             if(parsedData.length) {
@@ -32,7 +33,7 @@ Item {
 
     function updateJsonUrl(index) {
         if(jsonUrl) {
-            jsonReader.updateJsonUrl(jsonUrl, parsedData[index]);
+            rPlayerDataReader.updateJsonUrl(jsonUrl, parsedData[index]);
         }
     }
 
@@ -151,6 +152,23 @@ Item {
                 running: true
                 loops: Animation.Infinite
             }
+
+            onClicked: {
+                if(parsedData.length) {
+                    if(typeof videoIcon.source === "undefined") {
+                        return;
+                    }
+                    var imgPath = String(videoIcon.source);
+                    var jsonPath = imgPath.substring(0, imgPath.lastIndexOf("/")) + "/data.json";
+                    var jsonData = rPlayerDataReader.readJsonUrl(jsonPath);
+                    if (jsonData && jsonData.list) {
+                        var data = Object.values(jsonData.list);
+                        if(data.length) {
+                            videoView.parent.showUserInfoDialog(data[0]);
+                        }
+                    }
+                }
+            }
         }
 
         Icon {
@@ -171,6 +189,23 @@ Item {
                 duration: 5000
                 running: true
                 loops: Animation.Infinite
+            }
+
+            onClicked: {
+                if(parsedData.length) {
+                    if(typeof videoIcon2.source === "undefined") {
+                        return;
+                    }
+                    var imgPath = String(videoIcon2.source);
+                    var jsonPath = imgPath.substring(0, imgPath.lastIndexOf("/")) + "/data.json";
+                    var jsonData = rPlayerDataReader.readJsonUrl(jsonPath);
+                    if (jsonData && jsonData.list) {
+                        var data = Object.values(jsonData.list);
+                        if(data.length) {
+                            videoView.parent.showUserInfoDialog(data);
+                        }
+                    }
+                }
             }
         }
 

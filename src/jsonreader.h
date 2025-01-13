@@ -103,7 +103,10 @@ public:
                         if(updateObject["info"].toString() == "") {
                             list.removeAt(i);
                         } else {
-                            updateObject["path"] = QJsonValue(target);
+                            updateObject["path"] = QJsonValue(item["path"].toString());
+                            if(item["icon"].isString() && updateObject["icon"].isString()) {
+                                updateObject["icon"] = QJsonValue(item["icon"].toString());
+                            }
                             list[i] = updateObject;
                         }
                         break;
@@ -112,6 +115,9 @@ public:
                         if(updateObject["info"].toString() == "") {
                             list.removeAt(i);
                         } else {
+                            if(item["icon"].isString() && updateObject["icon"].isString()) {
+                                updateObject["icon"] = QJsonValue(item["icon"].toString());
+                            }
                             list[i] = updateObject;
                         }
                         break;
@@ -131,6 +137,9 @@ public:
                             if(updateObject["info"].toString() == "") {
                                 list.removeAt(i);
                             } else {
+                                if(item["icon"].isString() && updateObject["icon"].isString()) {
+                                    updateObject["icon"] = QJsonValue(item["icon"].toString());
+                                }
                                 updateObject["path"] = QJsonValue(target);
                                 list[i] = updateObject;
                             }
@@ -147,6 +156,9 @@ public:
                             if(updateObject["info"].toString() == "") {
                                 list.removeAt(i);
                             } else {
+                                if(item["icon"].isString() && updateObject["icon"].isString()) {
+                                    updateObject["icon"] = QJsonValue(item["icon"].toString());
+                                }
                                 list[i] = updateObject;
                             }
                             break;

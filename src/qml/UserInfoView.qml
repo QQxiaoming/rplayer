@@ -22,10 +22,40 @@ Item {
 
             Image {
                 id: userImage
+                property var sourceList : [""]
+                property int index : 0
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: width
+                fillMode: Image.PreserveAspectFit
+                source: userImage.sourceList[userImage.index]
+                
+                MultiPointTouchArea {
+                    anchors.fill: parent
+                    enabled: true
+                    onReleased: function(touchPoints) {
+                        if (userImage.sourceList.length <= 1) {
+                            return;
+                        }
+                        if (touchPoints.length === 1) {
+                            var touchPoint = touchPoints[0];
+                            if(touchPoint.startX - touchPoint.x > 100) {
+                                userImage.index = userImage.index + 1;
+                                if(userImage.index >= userImage.sourceList.length) {
+                                    userImage.index = 0;
+                                }
+                                userImage.source = userImage.sourceList[userImage.index];
+                            } else if(touchPoint.startX - touchPoint.x < -100) {
+                                userImage.index = userImage.index - 1;
+                                if(userImage.index < 0) {
+                                    userImage.index = userImage.sourceList.length - 1;
+                                }
+                                userImage.source = userImage.sourceList[userImage.index];
+                            }
+                        }
+                    }
+                }
             }
 
             Text {
@@ -49,7 +79,7 @@ Item {
     }
 
     function setInfo(info) {
-        userImage.source = info["image"];
+        userImage.sourceList = info["image"];
         userName.text = info["name"];
         userInfo.text = info["info"];
     }

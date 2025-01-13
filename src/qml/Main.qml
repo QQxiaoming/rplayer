@@ -182,14 +182,26 @@ Window {
     }
 
     FileDialog {
-        id: jsonFileDialog
-        title: qsTr("选择JSON文件")
+        id: jsonMediaFileDialog
+        title: qsTr("选择媒体数据JSON文件")
         fileMode: FileDialog.OpenFile
         nameFilters: ["JSON文件 (*.json)"]
         onAccepted: {
-            videoView.readJsonUrl(jsonFileDialog.selectedFile);
+            videoView.readMediaJsonUrl(jsonMediaFileDialog.selectedFile);
             var datetime = new Date();
-            debugView.addlog(datetime.toLocaleString() + " - " + jsonFileDialog.selectedFile);
+            debugView.addlog(datetime.toLocaleString() + " - " + jsonMediaFileDialog.selectedFile);
+        }
+    }
+
+    FileDialog {
+        id: jsonUserFileDialog
+        title: qsTr("选择用户JSON文件")
+        fileMode: FileDialog.OpenFile
+        nameFilters: ["JSON文件 (*.json)"]
+        onAccepted: {
+            videoView.readUserJsonUrl(jsonUserFileDialog.selectedFile);
+            var datetime = new Date();
+            debugView.addlog(datetime.toLocaleString() + " - " + jsonUserFileDialog.selectedFile);
         }
     }
 
@@ -233,7 +245,7 @@ Window {
                 }
                 onClicked: {
                     drawer.close();
-                    jsonFileDialog.open();
+                    jsonMediaFileDialog.open();
                 }
             }
 
@@ -266,6 +278,22 @@ Window {
                 onClicked: {
                     drawer.close();
                     videoFileDialog.open();
+                }
+            }
+
+            ItemDelegate {
+                width: parent.width
+                contentItem: Text {
+                    text: qsTr("登录")
+                    color: drawer.color
+                    font.pixelSize: drawer.fontpixelSize
+                }
+                background: Rectangle {
+                    color: "transparent"
+                }
+                onClicked: {
+                    drawer.close();
+                    jsonUserFileDialog.open();
                 }
             }
 

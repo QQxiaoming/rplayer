@@ -72,7 +72,7 @@ public:
         }
     }
 
-    Q_INVOKABLE void updateJsonUrl(const QString &filePath, QVariantMap data) {
+    Q_INVOKABLE void updateMediaJsonUrl(const QString &filePath, QVariantMap data) {
         QJsonDocument updateDocument = QJsonDocument::fromVariant(data);
         QJsonObject updateObject = updateDocument.object();
 
@@ -163,6 +163,50 @@ public:
                             }
                             break;
                         }
+                    }
+                }
+            }
+            obj["list"] = list;
+            QJsonDocument updateDocument(obj);
+            if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                qWarning() << "Failed to open file:" << filePath;
+                return;
+            }
+            file.write(updateDocument.toJson());
+            file.close();
+        } 
+    }
+
+    Q_INVOKABLE void updateUserJsonUrl(const QString &filePath, QVariantMap data) {
+        QJsonDocument updateDocument = QJsonDocument::fromVariant(data);
+        QJsonObject updateObject = updateDocument.object();
+
+        QUrl url(filePath);
+        if(url.isLocalFile()) {
+            QFile file(url.toLocalFile());
+            QFileInfo fileInfo(file);
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qWarning() << "Failed to open file:" << filePath;
+                return;
+            }
+
+            QByteArray jsonData = file.readAll();
+            file.close();
+
+            QJsonDocument document = QJsonDocument::fromJson(jsonData);
+            if (document.isNull() || !document.isObject()) {
+                qWarning() << "Failed to parse Local JSON file:" << filePath;
+                return;
+            }
+            QJsonObject obj = document.object();
+            QJsonArray list = obj["list"].toArray();
+            for(int i = 0; i < list.size(); i++) {
+                QJsonObject item = list[i].toObject();
+                if(item["name"].isString() && updateObject["name"].isString()) {
+                    QString target = item["name"].toString();
+                    if(target == updateObject["name"].toString()) {
+                        list[i] = updateObject;
+                        break;
                     }
                 }
             }

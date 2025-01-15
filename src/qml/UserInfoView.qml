@@ -74,6 +74,7 @@ Item {
                 anchors.right: parent.right
                 color: "white"
                 font.pixelSize: 50
+                wrapMode: Text.WrapAnywhere
             }
         }
     }

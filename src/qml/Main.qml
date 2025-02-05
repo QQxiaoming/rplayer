@@ -284,7 +284,7 @@ Window {
             ItemDelegate {
                 width: parent.width
                 contentItem: Text {
-                    text: qsTr("登录")
+                    text: videoView.userJsonUrl !== "" ? qsTr("切换登录") : qsTr("登录")
                     color: drawer.color
                     font.pixelSize: drawer.fontpixelSize
                 }

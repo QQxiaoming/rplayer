@@ -76,6 +76,25 @@ Item {
                 font.pixelSize: 50
                 wrapMode: Text.WrapAnywhere
             }
+
+            ListView {
+                id: userAttr
+                anchors.top: userInfo.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 200
+                model: ListModel {
+                }
+                delegate: Item {
+                    width: userAttr.width
+                    height: 50
+                    Row {
+                        spacing: 10
+                        Text { text: model.name; color: "white"; font.pixelSize: 30 }
+                        Text { text: model.value; color: "white"; font.pixelSize: 30 }
+                    }
+                }
+            }
         }
     }
 
@@ -83,5 +102,16 @@ Item {
         userImage.sourceList = info["image"];
         userName.text = info["name"];
         userInfo.text = info["info"];
+        userAttr.model.clear();
+        for (var i = 0; i < info["attr"].length; i++) {
+            userAttr.model.append({ name: info["attr"][i]["name"], value: info["attr"][i]["value"] });
+        }
+        if (userImage.sourceList.length > 0) {
+            userImage.index = 0;
+            userImage.source = userImage.sourceList[userImage.index];
+        } else {
+            userImage.index = 0;
+            userImage.source = "";
+        }
     }
 }

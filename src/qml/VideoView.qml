@@ -309,7 +309,7 @@ Item {
                     }
                 }
             }
-            onlongPressed: {
+            onLongPressed: {
                 if(mediaData.length) {
                     if(filtered_title !== "") {
                         filtered_title = "";
@@ -368,7 +368,7 @@ Item {
                     }
                 }
             }
-            onlongPressed: {
+            onLongPressed: {
                 if(mediaData.length) {
                     if(filtered_title !== "") {
                         filtered_title = "";
@@ -701,7 +701,7 @@ Item {
                                 var video = mediaData[currentIndex];
                                 if(filtered_title !== "") {
                                     while(video.title !== filtered_title) {
-                                        currentIndex = (currentIndex + 1) % mediaData.length;
+                                        currentIndex = (currentIndex - 1 + mediaData.length) % mediaData.length;
                                         video = mediaData[currentIndex];
                                     }
                                 }

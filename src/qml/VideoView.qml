@@ -384,7 +384,7 @@ Item {
             Text {
                 id: videoTitle
                 text: "\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_"
-                color: "white"
+                color: filtered_title !== "" ? "#ff69b4" : "white"
                 textFormat: Text.MarkdownText
                 font.pixelSize: 60
                 style: Text.Outline

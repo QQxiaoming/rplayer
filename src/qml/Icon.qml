@@ -19,6 +19,7 @@ Item {
     height: width
 
     signal clicked()
+    signal longPressed()
 
     function refresh() {
         if (enableHover) {
@@ -60,6 +61,17 @@ Item {
                 color: button.hovered ? hoveredBackColor : "transparent"
                 radius: iconRect.radius
             }
+            property bool longPressTriggered: false
+            Timer {
+                id: longPressTimer
+                interval: 500 // 长按判定时间，毫秒
+                running: false
+                repeat: false
+                onTriggered: {
+                    button.longPressTriggered = true;
+                    iconRect.parent.longPressed();
+                }
+            }
             onHoveredChanged: {
                 iconRect.parent.refresh();
                 if(button.hovered) {
@@ -68,17 +80,20 @@ Item {
                     iconRect.scale = 1.0;
                 }
             }
-            onClicked: {
-                iconRect.parent.clicked();
-                iconRect.parent.refresh();
-            }
             onPressed: {
                 if(enablePressAnimation) {
                     iconRect.scale = 0.8;
                 }
+                button.longPressTriggered = false;
+                longPressTimer.start();
             }
             onReleased: {
                 iconRect.scale = 1.0;
+                longPressTimer.stop();
+                if (!button.longPressTriggered) {
+                    iconRect.parent.clicked();
+                    iconRect.parent.refresh();
+                }
             }
         }
 

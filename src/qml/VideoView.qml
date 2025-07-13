@@ -11,6 +11,7 @@ Item {
     property int currentIndex: 0
     property string mediaJsonUrl: ""
     property string userJsonUrl: ""
+    property string filtered_title: ""
     property var mediaData: []
     property var userData: []
 
@@ -280,6 +281,18 @@ Item {
                 loops: Animation.Infinite
             }
 
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.radius * 2 + 12
+                height: parent.radius * 2 + 12
+                radius: (parent.radius * 2 + 12) / 2
+                color: "transparent"
+                border.color: filtered_title !== "" ? "#ff69b4" : "transparent"
+                border.width: filtered_title !== "" ? 8 : 0
+                z: -1
+                visible: true
+            }
+
             onClicked: {
                 if(mediaData.length) {
                     if(typeof videoIcon.source === "undefined") {
@@ -293,6 +306,15 @@ Item {
                         if(data.length) {
                             videoView.parent.showUserInfoDialog(data[0]);
                         }
+                    }
+                }
+            }
+            onlongPressed: {
+                if(mediaData.length) {
+                    if(filtered_title !== "") {
+                        filtered_title = "";
+                    } else {
+                        filtered_title = mediaData[currentIndex].title;
                     }
                 }
             }
@@ -318,6 +340,18 @@ Item {
                 loops: Animation.Infinite
             }
 
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.radius * 2 + 12
+                height: parent.radius * 2 + 12
+                radius: (parent.radius * 2 + 12) / 2
+                color: "transparent"
+                border.color: filtered_title !== "" ? "#ff69b4" : "transparent"
+                border.width: filtered_title !== "" ? 8 : 0
+                z: -1
+                visible: true
+            }
+
             onClicked: {
                 if(mediaData.length) {
                     if(typeof videoIcon2.source === "undefined") {
@@ -331,6 +365,15 @@ Item {
                         if(data.length) {
                             videoView.parent.showUserInfoDialog(data);
                         }
+                    }
+                }
+            }
+            onlongPressed: {
+                if(mediaData.length) {
+                    if(filtered_title !== "") {
+                        filtered_title = "";
+                    } else {
+                        filtered_title = mediaData[currentIndex].title;
                     }
                 }
             }
@@ -643,11 +686,25 @@ Item {
                             if (touchPoint.startY - touchPoint.y > slideThreshold) {
                                 // Slide up to play next video
                                 currentIndex = (currentIndex + 1) % mediaData.length;
+                                var video = mediaData[currentIndex];
+                                if(filtered_title !== "") {
+                                    while(video.title !== filtered_title) {
+                                        currentIndex = (currentIndex + 1) % mediaData.length;
+                                        video = mediaData[currentIndex];
+                                    }
+                                }
                                 refreshVideo(true);
                                 return;
                             } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
                                 // Slide down to play previous video
                                 currentIndex = (currentIndex - 1 + mediaData.length) % mediaData.length;
+                                var video = mediaData[currentIndex];
+                                if(filtered_title !== "") {
+                                    while(video.title !== filtered_title) {
+                                        currentIndex = (currentIndex + 1) % mediaData.length;
+                                        video = mediaData[currentIndex];
+                                    }
+                                }
                                 refreshVideo(false);
                                 return;
                             } else if (touchPoint.startX - touchPoint.x > slideThreshold) {

@@ -242,6 +242,14 @@ Item {
         videoInfoLabel.visible = enable;
     }
 
+    function updateFilteredTitle(title) {
+        if (title !== filtered_title) {
+            filtered_title = title;
+            filteredModeNotification.opacity = 1.0;
+            notificationTimer.restart();
+        }
+    }
+
     Rectangle {
         id: videoView
         anchors.fill: parent
@@ -312,9 +320,9 @@ Item {
             onLongPressed: {
                 if(mediaData.length) {
                     if(filtered_title !== "") {
-                        filtered_title = "";
+                        updateFilteredTitle("");
                     } else {
-                        filtered_title = mediaData[currentIndex].title;
+                        updateFilteredTitle(mediaData[currentIndex].title);
                     }
                 }
             }
@@ -371,9 +379,9 @@ Item {
             onLongPressed: {
                 if(mediaData.length) {
                     if(filtered_title !== "") {
-                        filtered_title = "";
+                        updateFilteredTitle("");
                     } else {
-                        filtered_title = mediaData[currentIndex].title;
+                        updateFilteredTitle(mediaData[currentIndex].title);
                     }
                 }
             }
@@ -717,6 +725,86 @@ Item {
                         }
                     }
                 }
+            }
+        }
+
+        // Filtered mode notification
+        Rectangle {
+            id: filteredModeNotification
+            anchors.centerIn: parent
+            width: Math.min(parent.width * 0.8, 600)
+            height: 120
+            radius: 20
+            color: "#80000000"
+            border.color: filtered_title !== "" ? "#ff69b4" : "#34d399"
+            border.width: 3
+            opacity: 0.0
+            z: 10
+            
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: 3
+                radius: parent.radius - 3
+                color: "transparent"
+                border.color: filtered_title !== "" ? "#ff69b4" : "#34d399"
+                border.width: 1
+                opacity: 0.5
+            }
+            
+            Column {
+                anchors.centerIn: parent
+                spacing: 10
+                
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: filtered_title !== "" ? "已进入筛选模式" : "已退出筛选模式"
+                    color: filtered_title !== "" ? "#ff69b4" : "#34d399"
+                    font.pixelSize: 36
+                    font.bold: true
+                    style: Text.Outline
+                    styleColor: "black"
+                }
+                
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: filtered_title !== "" ? ("只看作者: " + filtered_title) : ("取消只看作者")
+                    color: "white"
+                    font.pixelSize: 24
+                    style: Text.Outline
+                    styleColor: "black"
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
+                    elide: Text.ElideRight
+                }
+            }
+            
+            // Fade in animation
+            Behavior on opacity {
+                PropertyAnimation {
+                    duration: 300
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            
+            // Auto hide timer
+            Timer {
+                id: notificationTimer
+                interval: 3000
+                running: false
+                onTriggered: {
+                    fadeOutAnimation.start()
+                }
+            }
+            
+            // Fade out animation for auto-hide
+            PropertyAnimation {
+                id: fadeOutAnimation
+                target: filteredModeNotification
+                property: "opacity"
+                from: 1.0
+                to: 0.0
+                duration: 500
+                easing.type: Easing.InOutQuad
             }
         }
     }

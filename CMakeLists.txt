@@ -31,6 +31,7 @@ qt_add_qml_module(${CMAKE_PROJECT_NAME}
         src/qml/UserInfoView.qml
         src/qml/CommentView.qml
         src/qml/CommentItem.qml
+        src/qml/ParticleEffect.qml
     SOURCES 
         src/rplayerdatareader.h 
         src/fonticon.h 

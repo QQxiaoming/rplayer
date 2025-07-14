@@ -7,6 +7,7 @@ Item {
     implicitWidth : 1080
 
     property bool enableFullScreen: false
+    property var playbackRate: 1.0
     property alias fullScreen: videoOutputFull.visible
     property alias paused: pauseIcon.visible
 
@@ -272,6 +273,18 @@ Item {
             currentMediaOutput.imageView.play();
             pauseIcon.visible = false
         }
+    }
+
+    function togglePlaybackSpeed() {
+        var currentMediaOutput = stackView.currentItem;
+        var currentPlayer = currentMediaOutput.player;
+        if( playbackRate === 1.0) {
+            playbackRate = 2.0;
+        } else {
+            playbackRate = 1.0;
+        }
+        mediaPlayer1.playbackRate = playbackRate;
+        mediaPlayer2.playbackRate = playbackRate;
     }
 
     function exitFullScreen() {

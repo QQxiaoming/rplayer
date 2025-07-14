@@ -2,7 +2,6 @@ import os
 import json
 import argparse
 
-
 def load_json_files(json_path):
     dir_path = os.path.dirname(json_path)
     with open(json_path, 'r', encoding='utf-8') as f:
@@ -30,7 +29,7 @@ def list_actual_files(data_dir):
             files.add(file_path)
     return files
 
-def main():
+if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--json_path", type=str, required=True, help="Path to the JSON file")
     parser.add_argument("--data_dir", type=str, required=True, help="Path to the data directory")
@@ -51,7 +50,3 @@ def main():
     print('\n实际存在但JSON中没有的文件:')
     for f in extra_files:
         print(f)
-
-
-if __name__ == '__main__':
-    main()

@@ -20,6 +20,14 @@ Item {
     signal showCommentDialog(var info)
     signal fullScreened(var enable)
 
+    function showNotification(mainTitle, subTitle, themeColor) {
+        notification.mainTitle = mainTitle;
+        notification.subTitle = subTitle;
+        notification.themeColor = themeColor;
+        notification.opacity = 1.0;
+        notificationTimer.restart();
+    }
+
     function readMediaJsonUrl(url) {
         var jsonData = rPlayerDataReader.readJsonUrl(url);
         if (jsonData && jsonData.list) {
@@ -244,9 +252,11 @@ Item {
 
     function updateFilteredTitle(title) {
         if (title !== filtered_title) {
+            var notificationMainTitle = title !== "" ? "已进入筛选模式" : "已退出筛选模式";
+            var notificationSubTitle = title !== "" ? ("只看作者: " + title) : ("取消只看作者: " + filtered_title);
+            var notificationThemeColor = title !== "" ? "#ff69b4" : "#34d399";
             filtered_title = title;
-            filteredModeNotification.opacity = 1.0;
-            notificationTimer.restart();
+            showNotification(notificationMainTitle, notificationSubTitle, notificationThemeColor);
         }
     }
 
@@ -671,8 +681,32 @@ Item {
             anchors.fill: parent
             anchors.leftMargin: 0
             anchors.topMargin: 0
-            onReleased: function(touchPoints) {
+            
+            property bool isLongPress: false
+            
+            Timer {
+                id: longPressTimer
+                interval: 800  // 800ms for long press detection
+                running: false
+                onTriggered: {
+                    multiPointTouchArea.isLongPress = true;
+                    if(mediaData.length) {
+                        videoPlayer.togglePlaybackSpeed();
+                        showNotification("已切换播放速度", "当前播放速度: X" + videoPlayer.playbackRate, "#ffffffff");
+                    }
+                }
+            }
+            
+            onPressed: function(touchPoints) {
                 if (touchPoints.length === 1) {
+                    isLongPress = false;
+                    longPressTimer.start();
+                }
+            }
+            
+            onReleased: function(touchPoints) {
+                longPressTimer.stop();
+                if (touchPoints.length === 1 && !isLongPress) {
                     var touchPoint = touchPoints[0];
                     if(mediaData.length) {
                         if ((touchPoint.x - touchPoint.startX < chickThreshold)&&
@@ -728,15 +762,19 @@ Item {
             }
         }
 
-        // Filtered mode notification
+        // notification
         Rectangle {
-            id: filteredModeNotification
+            property string mainTitle: "mainTitle"
+            property string subTitle: "subTitle"
+            property string themeColor: "#ff69b4"
+
+            id: notification
             anchors.centerIn: parent
             width: Math.min(parent.width * 0.8, 600)
             height: 120
             radius: 20
             color: "#80000000"
-            border.color: filtered_title !== "" ? "#ff69b4" : "#34d399"
+            border.color: themeColor
             border.width: 3
             opacity: 0.0
             z: 10
@@ -746,7 +784,7 @@ Item {
                 anchors.margins: 3
                 radius: parent.radius - 3
                 color: "transparent"
-                border.color: filtered_title !== "" ? "#ff69b4" : "#34d399"
+                border.color: notification.themeColor
                 border.width: 1
                 opacity: 0.5
             }
@@ -757,8 +795,8 @@ Item {
                 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: filtered_title !== "" ? "已进入筛选模式" : "已退出筛选模式"
-                    color: filtered_title !== "" ? "#ff69b4" : "#34d399"
+                    text: notification.mainTitle
+                    color: notification.themeColor
                     font.pixelSize: 36
                     font.bold: true
                     style: Text.Outline
@@ -767,7 +805,7 @@ Item {
                 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: filtered_title !== "" ? ("只看作者: " + filtered_title) : ("取消只看作者")
+                    text: notification.subTitle
                     color: "white"
                     font.pixelSize: 24
                     style: Text.Outline
@@ -799,7 +837,7 @@ Item {
             // Fade out animation for auto-hide
             PropertyAnimation {
                 id: fadeOutAnimation
-                target: filteredModeNotification
+                target: notification
                 property: "opacity"
                 from: 1.0
                 to: 0.0

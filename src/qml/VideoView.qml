@@ -12,6 +12,7 @@ Item {
     property string mediaJsonUrl: ""
     property string userJsonUrl: ""
     property string filtered_title: ""
+    property string currMediaJsonDirUrl: ""
     property var mediaData: []
     property var userData: []
 
@@ -38,6 +39,8 @@ Item {
                 mediaJsonUrl = url;
                 currentIndex = 0;
                 refreshVideo(true);
+                var path = new URL(url).pathname;
+                currMediaJsonDirUrl = path.substring(0, path.lastIndexOf("/"));
                 showNotification("媒体数据加载成功", "已加载 " + mediaData.length + " 个媒体文件", "#34d399");
             } else {
                 showNotification("媒体数据为空", "未找到可播放的媒体内容", "#f59e0b");
@@ -107,7 +110,30 @@ Item {
 
     function updateUserJsonUrl() {
         if(userJsonUrl) {
-            rPlayerDataReader.updateUserJsonUrl(userJsonUrl, userData[0]);
+            var saveData = userData
+            if(saveData.length) {
+                for(var i = 0; i < saveData[0]["like"].length; i++) {
+                    if(typeof saveData[0]["like"][i] === "string") {
+                        saveData[0]["like"][i] = saveData[0]["like"][i].replace(currMediaJsonDirUrl, "{JSON_PATH}");
+                    }
+                }
+                for(var i = 0; i < saveData[0]["bookMark"].length; i++) {
+                    if(typeof saveData[0]["bookMark"][i] === "string") {
+                        saveData[0]["bookMark"][i] = saveData[0]["bookMark"][i].replace(currMediaJsonDirUrl, "{JSON_PATH}");
+                    }
+                }
+                for(var i = 0; i < saveData[0]["star"].length; i++) {
+                    if(typeof saveData[0]["star"][i] === "string") {
+                        saveData[0]["star"][i] = saveData[0]["star"][i].replace(currMediaJsonDirUrl, "{JSON_PATH}");
+                    }
+                }
+                for(var i = 0; i < saveData[0]["image"].length; i++) {
+                    if(typeof saveData[0]["image"][i] === "string") {
+                        saveData[0]["image"][i] = saveData[0]["image"][i].replace(currMediaJsonDirUrl, "{JSON_PATH}");
+                    }
+                }
+            }
+            rPlayerDataReader.updateUserJsonUrl(userJsonUrl, saveData[0]);
         }
     }
 

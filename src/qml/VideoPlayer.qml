@@ -285,6 +285,8 @@ Item {
         }
         mediaPlayer1.playbackRate = playbackRate;
         mediaPlayer2.playbackRate = playbackRate;
+        mediaOutput1.playbackRate = playbackRate;
+        mediaOutput2.playbackRate = playbackRate;
     }
 
     function exitFullScreen() {

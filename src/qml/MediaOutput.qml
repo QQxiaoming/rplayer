@@ -9,6 +9,7 @@ Item {
 
     property alias videoView: videoOutput
     property alias imageView: imageOutput
+    property var playbackRate: 1.0
 
     VideoOutput {
         id: videoOutput
@@ -66,7 +67,7 @@ Item {
 
         Timer {
             id : timer
-            interval: 3*1000
+            interval: 3*1000/imageOutput.parent.playbackRate
             repeat: true
             onTriggered: {
                 if(start && imageOutput.sourceList.length) {

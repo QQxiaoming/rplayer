@@ -38,7 +38,12 @@ Item {
                 mediaJsonUrl = url;
                 currentIndex = 0;
                 refreshVideo(true);
+                showNotification("媒体数据加载成功", "已加载 " + mediaData.length + " 个媒体文件", "#34d399");
+            } else {
+                showNotification("媒体数据为空", "未找到可播放的媒体内容", "#f59e0b");
             }
+        } else {
+            showNotification("媒体数据加载失败", "无法解析媒体JSON文件", "#ef4444");
         }
     }
 
@@ -49,6 +54,7 @@ Item {
             if(userData.length) {
                 userData.pop();
                 userJsonUrl = url;
+                showNotification("用户数据加载成功", "已登录用户：" + (userData[0].name || "未知用户"), "#3b82f6");
                 if(mediaData.length) {
                     var video = mediaData[currentIndex];
                     if(typeof userData[0].like !== "undefined") {
@@ -85,7 +91,11 @@ Item {
                         }
                     }
                 }
+            } else {
+                showNotification("用户数据为空", "用户配置文件无效", "#f59e0b");
             }
+        } else {
+            showNotification("用户数据加载失败", "无法解析用户JSON文件", "#ef4444");
         }
     }
 
@@ -145,6 +155,7 @@ Item {
             mediaData[currentIndex].info = info;
             mediaData[currentIndex].title = title;
             updateMediaJsonUrl(currentIndex);
+            showNotification("信息已更新", "视频信息保存成功", "#10b981");
         }
     }
 
@@ -152,6 +163,7 @@ Item {
         if(mediaData.length) {
             mediaData[currentIndex].comment = list;
             updateMediaJsonUrl(currentIndex);
+            showNotification("评论已更新", "共 " + list.length + " 条评论", "#8b5cf6");
         }
     }
 
@@ -314,6 +326,7 @@ Item {
             onClicked: {
                 if(mediaData.length) {
                     if(typeof videoIcon.source === "undefined") {
+                        showNotification("无法查看详情", "头像信息不可用", "#ef4444");
                         return;
                     }
                     var imgPath = String(videoIcon.source);
@@ -323,7 +336,11 @@ Item {
                         var data = Object.values(jsonData.list);
                         if(data.length) {
                             videoView.parent.showUserInfoDialog(data[0]);
+                        } else {
+                            showNotification("用户信息为空", "未找到用户详细信息", "#f59e0b");
                         }
+                    } else {
+                        showNotification("无法加载用户信息", "用户信息文件读取失败", "#ef4444");
                     }
                 }
             }
@@ -373,6 +390,7 @@ Item {
             onClicked: {
                 if(mediaData.length) {
                     if(typeof videoIcon2.source === "undefined") {
+                        showNotification("无法查看详情", "头像信息不可用", "#ef4444");
                         return;
                     }
                     var imgPath = String(videoIcon2.source);
@@ -382,7 +400,11 @@ Item {
                         var data = Object.values(jsonData.list);
                         if(data.length) {
                             videoView.parent.showUserInfoDialog(data);
+                        } else {
+                            showNotification("用户信息为空", "未找到用户详细信息", "#f59e0b");
                         }
+                    } else {
+                        showNotification("无法加载用户信息", "用户信息文件读取失败", "#ef4444");
                     }
                 }
             }
@@ -565,8 +587,10 @@ Item {
                     var curr = parseInt(likeNum.text);
                     if(holdHovered) {
                         likeNum.text = curr-1;
+                        showNotification("取消点赞", "点赞数：" + likeNum.text, "#6b7280");
                     } else {
                         likeNum.text = curr+1;
+                        showNotification("点赞成功", "点赞数：" + likeNum.text, "#e74c3c");
                     }
                     mediaData[currentIndex].like = parseInt(likeNum.text);
                     updateMediaJsonUrl(currentIndex);
@@ -615,8 +639,10 @@ Item {
                     var curr = parseInt(bookMarkNum.text);
                     if(holdHovered) {
                         bookMarkNum.text = curr-1;
+                        showNotification("取消收藏", "收藏数：" + bookMarkNum.text, "#6b7280");
                     } else {
                         bookMarkNum.text = curr+1;
+                        showNotification("收藏成功", "收藏数：" + bookMarkNum.text, "#3498db");
                     }
                     mediaData[currentIndex].bookMark = parseInt(bookMarkNum.text);
                     updateMediaJsonUrl(currentIndex);
@@ -665,8 +691,10 @@ Item {
                     var curr = parseInt(starNum.text);
                     if(holdHovered) {
                         starNum.text = curr-1;
+                        showNotification("取消星标", "星标数：" + starNum.text, "#6b7280");
                     } else {
                         starNum.text = curr+1;
+                        showNotification("星标成功", "星标数：" + starNum.text, "#f1c40f");
                     }
                     mediaData[currentIndex].star = parseInt(starNum.text);
                     updateMediaJsonUrl(currentIndex);
@@ -719,6 +747,7 @@ Item {
                         if(videoPlayer.fullScreen) {
                             if (touchPoint.startX - touchPoint.x > slideThreshold) {
                                 videoPlayer.exitFullScreen();
+                                showNotification("退出全屏", "已退出全屏模式", "#10b981");
                                 return;
                             }
                         } else {

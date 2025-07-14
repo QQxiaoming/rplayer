@@ -12,6 +12,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QEventLoop>
+#include <QStandardPaths>
 #include <QDebug>
 
 class RPlayerDataReader : public QObject {
@@ -219,6 +220,10 @@ public:
             file.write(updateDocument.toJson());
             file.close();
         } 
+    }
+
+    Q_INVOKABLE QString getDocumentsPath() {
+        return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     }
 };
 

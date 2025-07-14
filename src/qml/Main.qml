@@ -146,6 +146,13 @@ Window {
     AboutView {
         id: aboutView
         visible: false
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                stackView.push(vipPasswordView);
+            }
+        }
     }
 
     CommentView {
@@ -175,6 +182,111 @@ Window {
     UserInfoView {
         id: userInfoDialog
         visible: false
+    }
+
+    Item {
+        id: vipPasswordView
+        visible: false
+        implicitHeight: 1920
+        implicitWidth: 1080
+
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+
+            Text {
+                id: vipTitle
+                text: "请输入VIP口令"
+                color: "white"
+                font.pixelSize: 80
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 300
+            }
+
+            TextInput {
+                id: vipPasswordInput
+                y: 600
+                height: 100
+                text: ""
+                color: "white"
+                font.pixelSize: 60
+                echoMode: TextInput.Password
+                horizontalAlignment: Text.AlignHCenter
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: 100
+                anchors.rightMargin: 100
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: "transparent"
+                    border.color: "white"
+                    border.width: 2
+                }
+            }
+
+            Button {
+                id: vipConfirmButton
+                width: 200
+                height: 80
+                contentItem: Text {
+                    text: "确认"
+                    color: "white"
+                    font.pixelSize: 50
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                background: Rectangle {
+                    color: vipConfirmButton.pressed ? "gray" : "#ff69b4"
+                    border.color: "white"
+                    border.width: 1
+                }
+                anchors.left: parent.left
+                anchors.top: vipPasswordInput.bottom
+                anchors.leftMargin: 200
+                anchors.topMargin: 150
+                onClicked: {
+                    if (vipPasswordInput.text === "121215") {
+                        vipPasswordInput.text = "";
+                        stackView.pop();
+                        stackView.pop();
+                        var path = rPlayerDataReader.getDocumentsPath();
+                        videoView.readMediaJsonUrl("file://" + path + "/rplayer数据库/rplayer.json");
+                        videoView.readUserJsonUrl("file://" + path + "/rplayer数据库/用户信息/Quard/data.json");
+                    } else {
+                        debugView.addlog("VIP口令错误");
+                        vipPasswordInput.text = "";
+                    }
+                }
+            }
+
+            Button {
+                id: vipCancelButton
+                width: 200
+                height: 80
+                contentItem: Text {
+                    text: "取消"
+                    color: "white"
+                    font.pixelSize: 50
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                background: Rectangle {
+                    color: vipCancelButton.pressed ? "gray" : "#4CAF50"
+                    border.color: "white"
+                    border.width: 1
+                }
+                anchors.right: parent.right
+                anchors.top: vipPasswordInput.bottom
+                anchors.rightMargin: 200
+                anchors.topMargin: 150
+                onClicked: {
+                    vipPasswordInput.text = "";
+                    stackView.pop();
+                }
+            }
+        }
     }
 
     Component.onCompleted: {

@@ -1,7 +1,6 @@
 import os
 import json
 import argparse
-import random
 
 def merge(data_dir, output):
     files = os.listdir(data_dir)

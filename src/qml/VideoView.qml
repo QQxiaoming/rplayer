@@ -51,7 +51,7 @@ Item {
     }
 
     function readUserJsonUrl(url) {
-        var jsonData = rPlayerDataReader.readJsonUrl(url);
+        var jsonData = rPlayerDataReader.readJsonUrl(url,currMediaJsonDirUrl);
         if (jsonData && jsonData.list) {
             userData = Object.values(jsonData.list);
             if(userData.length) {
@@ -93,6 +93,9 @@ Item {
                             }
                         }
                     }
+                    likeIcon.refresh()
+                    bookMarkIcon.refresh()
+                    starIcon.refresh()
                 }
             } else {
                 showNotification("用户数据为空", "用户配置文件无效", "#f59e0b");
@@ -110,7 +113,7 @@ Item {
 
     function updateUserJsonUrl() {
         if(userJsonUrl) {
-            var saveData = userData
+            var saveData = JSON.parse(JSON.stringify(userData))
             if(saveData.length) {
                 for(var i = 0; i < saveData[0]["like"].length; i++) {
                     if(typeof saveData[0]["like"][i] === "string") {

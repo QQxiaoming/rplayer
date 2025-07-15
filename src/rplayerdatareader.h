@@ -20,7 +20,7 @@ class RPlayerDataReader : public QObject {
 public:
     explicit RPlayerDataReader(QObject *parent = nullptr) : QObject(parent) {}
 
-    Q_INVOKABLE QVariantMap readJsonUrl(const QString &filePath) {
+    Q_INVOKABLE QVariantMap readJsonUrl(const QString &filePath, const QString &jsonPath = "") {
         QUrl url(filePath);
         if(url.isLocalFile()) {
             // from LocalFile
@@ -33,7 +33,11 @@ public:
 
             QByteArray jsonData = file.readAll();
             file.close();
-            jsonData.replace("{JSON_PATH}", fileInfo.absolutePath().toUtf8());
+            if(jsonPath == ""){
+                jsonData.replace("{JSON_PATH}", fileInfo.absolutePath().toUtf8());
+            } else {
+                jsonData.replace("{JSON_PATH}", jsonPath.toUtf8());
+            }
 
             QJsonDocument document = QJsonDocument::fromJson(jsonData);
             if (document.isNull() || !document.isObject()) {

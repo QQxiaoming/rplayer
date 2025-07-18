@@ -158,6 +158,7 @@ Window {
     CommentView {
         id: commentDialog
         visible: false
+        currUserName: videoView.currUserName
         onAccepted: function(list){
             videoView.updateVideoComment(list);
             stackView.pop();

@@ -13,6 +13,7 @@ Item {
     property string userJsonUrl: ""
     property string filtered_title: ""
     property string currMediaJsonDirUrl: ""
+    property string currUserName: ""
     property var mediaData: []
     property var userData: []
 
@@ -57,6 +58,7 @@ Item {
             if(userData.length) {
                 userData.pop();
                 userJsonUrl = url;
+                currUserName = userData[0].name;
                 showNotification("用户数据加载成功", "已登录用户：" + (userData[0].name || "未知用户"), "#3b82f6");
                 if(mediaData.length) {
                     var video = mediaData[currentIndex];

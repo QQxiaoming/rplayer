@@ -4,6 +4,7 @@ import QtQuick.Controls
 Item {
     implicitHeight : 1920
     implicitWidth : 1080
+    property string currUserName: ""
 
     signal accepted(var commentList)
 
@@ -55,7 +56,15 @@ Item {
                     var list = [];
                     for(var i = 0; i < inputModel.count; i++) {
                         if(inputList.itemAtIndex(i).itemName === "") {
-                            continue;
+                            if(inputList.itemAtIndex(i).itemContent === "") {
+                                continue;
+                            } else {
+                                if(rectangle.parent.currUserName !== "") {
+                                    inputList.itemAtIndex(i).itemName = rectangle.parent.currUserName;
+                                } else {
+                                    inputList.itemAtIndex(i).itemName = "匿名";
+                                }
+                            }
                         }
                         var comment = {};
                         comment["name"] = inputList.itemAtIndex(i).itemName;

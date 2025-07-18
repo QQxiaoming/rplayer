@@ -9,7 +9,7 @@ Item {
 
     property alias videoView: videoOutput
     property alias imageView: imageOutput
-    property var playbackRate: 1.0
+    property real playbackRate: 1.0
 
     VideoOutput {
         id: videoOutput

@@ -740,6 +740,10 @@ Item {
             anchors.topMargin: 0
             
             property bool isLongPress: false
+            property real lastPinchDistance: 0
+            property real scaleFactor: 1.0
+            property real minScale: 0.5
+            property real maxScale: 3.0
             
             Timer {
                 id: longPressTimer
@@ -758,6 +762,11 @@ Item {
                 if (touchPoints.length === 1) {
                     isLongPress = false;
                     longPressTimer.start();
+                } else if (touchPoints.length === 2) {
+                    // 记录初始双指距离
+                    var dx = touchPoints[0].x - touchPoints[1].x;
+                    var dy = touchPoints[0].y - touchPoints[1].y;
+                    lastPinchDistance = Math.sqrt(dx * dx + dy * dy);
                 }
             }
             
@@ -816,6 +825,28 @@ Item {
                             }
                         }
                     }
+                }
+                // 双指缩放结束时重置 lastPinchDistance
+                if (touchPoints.length < 2) {
+                    lastPinchDistance = 0;
+                }
+            }
+
+            onUpdated: function(touchPoints) {
+                // 双指缩放，缩放中心跟随手势中点
+                if (touchPoints.length === 2) {
+                    var dx = touchPoints[0].x - touchPoints[1].x;
+                    var dy = touchPoints[0].y - touchPoints[1].y;
+                    var distance = Math.sqrt(dx * dx + dy * dy);
+                    var centerX = (touchPoints[0].x + touchPoints[1].x) / 2;
+                    var centerY = (touchPoints[0].y + touchPoints[1].y) / 2;
+                    if (lastPinchDistance > 0) {
+                        var delta = distance - lastPinchDistance;
+                        var scaleChange = 1 + delta / 300.0; // 缩放灵敏度
+                        scaleFactor = Math.max(minScale, Math.min(maxScale, scaleFactor * scaleChange));
+                        videoPlayer.setScale(scaleFactor, centerX/multiPointTouchArea.width, centerY/multiPointTouchArea.height);
+                    }
+                    lastPinchDistance = distance;
                 }
             }
         }

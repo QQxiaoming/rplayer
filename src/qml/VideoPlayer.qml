@@ -10,6 +10,46 @@ Item {
     property var playbackRate: 1.0
     property alias fullScreen: videoOutputFull.visible
     property alias paused: pauseIcon.visible
+    property real pinchCenterX: 0.5
+    property real pinchCenterY: 0.5
+    property real pinchScale: 1.0
+
+    transform: [
+        Translate { 
+            x: pinchCenterX*width/pinchScale-pinchCenterX*width;
+            y: pinchCenterY*height/pinchScale-pinchCenterY*height
+        },
+        Scale {
+            xScale: pinchScale; 
+            yScale: pinchScale
+        }
+    ]
+
+    function setScale(scale, centerX, centerY) {
+        //计算缩放中心点在当前视图中的真实的中心点比例
+        //1.还原当前图像大小
+        var currentWidth = pinchScale * width;
+        var currentHeight = pinchScale * height;
+        //2.计算当前图像的左上角坐标
+        var currentLeft = pinchCenterX * width - pinchCenterX * currentWidth;
+        var currentTop = pinchCenterY * height - pinchCenterY * currentHeight;
+        //3.计算缩放中心点在当前视图中的真实位置
+        var realCenterX = (centerX*width- currentLeft) / currentWidth;
+        var realCenterY = (centerY*height - currentTop) / currentHeight;
+        if(realCenterX < 0) realCenterX = 0;
+        if(realCenterX > 1) realCenterX = 1;
+        if(realCenterY < 0) realCenterY = 0;
+        if(realCenterY > 1) realCenterY = 1;
+        pinchCenterX = realCenterX;
+        pinchCenterY = realCenterY;
+        pinchScale = scale;
+    }
+
+    function resetScale() {
+        pinchCenterX = 0.5;
+        pinchCenterY = 0.5;
+        pinchScale = 1.0;
+    }
 
     signal fullScreened(var info)
 

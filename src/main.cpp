@@ -20,6 +20,11 @@ int main(int argc, char *argv[])
     QFontIcon::addFont(QString(":/qt/qml/")+MAIN_UI_NAME+"/res/fontawesome-webfont-v6.6.0-solid-900.ttf");
     QFontIcon::instance()->setColor(Qt::white);
 
+    QPalette palette;
+    QColor linkColor = QColor(0x00, 0xbf, 0xff);
+    palette.setColor(QPalette::Link, linkColor);
+    app.setPalette(palette);
+    
     QQmlApplicationEngine engine;
 
     RPlayerDataReader rPlayerDataReader;

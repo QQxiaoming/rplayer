@@ -36,6 +36,8 @@ Item {
         if (jsonData && jsonData.list) {
             mediaData = Object.values(jsonData.list);
             if(mediaData.length) {
+                updateFilteredTitle("");
+                updateFilteredInfo("");
                 mediaData.pop();
                 mediaData.sort(() => Math.random() - 0.5);
                 mediaJsonUrl = url;

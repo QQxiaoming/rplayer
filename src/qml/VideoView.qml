@@ -12,6 +12,7 @@ Item {
     property string mediaJsonUrl: ""
     property string userJsonUrl: ""
     property string filtered_title: ""
+    property string filtered_info: ""
     property string currMediaJsonDirUrl: ""
     property string currUserName: ""
     property var mediaData: []
@@ -303,6 +304,16 @@ Item {
         }
     }
 
+    function updateFilteredInfo(info) {
+        if (info !== filtered_info) {
+            var notificationMainTitle = info !== "" ? "已进入筛选模式" : "已退出筛选模式";
+            var notificationSubTitle = info !== "" ? ("只看系列: " + info) : ("取消只看系列: " + filtered_info);
+            var notificationThemeColor = info !== "" ? "#ff69b4" : "#34d399";
+            filtered_info = info;
+            showNotification(notificationMainTitle, notificationSubTitle, notificationThemeColor);
+        }
+    }
+
     Rectangle {
         id: videoView
         anchors.fill: parent
@@ -479,12 +490,24 @@ Item {
             Text {
                 id: videoInfo
                 text: "\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n"
-                color: "white"
+                color: filtered_info !== "" ? "#ff69b4" : "white"
                 textFormat: Text.MarkdownText
                 font.pixelSize: 40
                 font.capitalization: Font.Capitalize
                 style: Text.Outline
                 styleColor: "black"
+                onLinkActivated: (url) => {
+                    if(url.startsWith("http://") || url.startsWith("https://")) {
+                        Qt.openUrlExternally(url)
+                    } else if(url.startsWith("rplayerfilter://")) {
+                        var info = url.replace("rplayerfilter://", "")
+                        if (info === filtered_info) {
+                            updateFilteredInfo("")
+                        } else {
+                            updateFilteredInfo(info)
+                        }
+                    }
+                }
             }
             anchors.left: parent.left
             anchors.right: parent.right
@@ -789,24 +812,43 @@ Item {
                                 // Slide up to play next video
                                 currentIndex = (currentIndex + 1) % mediaData.length;
                                 var video = mediaData[currentIndex];
-                                if(filtered_title !== "") {
-                                    while(video.title !== filtered_title) {
+                                var matchFilter = true;
+                                do {
+                                    if(filtered_title !== "") {
+                                        matchFilter = matchFilter && (video.title === filtered_title);
+                                    }
+                                    if(filtered_info !== "") {
+                                        matchFilter = matchFilter && (video.info.indexOf("#"+filtered_info) !== -1);
+                                    }
+                                    if(!matchFilter) {
                                         currentIndex = (currentIndex + 1) % mediaData.length;
                                         video = mediaData[currentIndex];
+                                        matchFilter = true;
+                                    } else {
+                                        break;
                                     }
-                                }
+                                } while(true);
                                 refreshVideo(true);
                                 return;
                             } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
                                 // Slide down to play previous video
                                 currentIndex = (currentIndex - 1 + mediaData.length) % mediaData.length;
                                 var video = mediaData[currentIndex];
-                                if(filtered_title !== "") {
-                                    while(video.title !== filtered_title) {
+                                do {
+                                    if(filtered_title !== "") {
+                                        matchFilter = matchFilter && (video.title === filtered_title);
+                                    }
+                                    if(filtered_info !== "") {
+                                        matchFilter = matchFilter && (video.info.indexOf("#"+filtered_info) !== -1);
+                                    }
+                                    if(!matchFilter) {
                                         currentIndex = (currentIndex - 1 + mediaData.length) % mediaData.length;
                                         video = mediaData[currentIndex];
+                                        matchFilter = true;
+                                    } else {
+                                        break;
                                     }
-                                }
+                                } while(true);
                                 refreshVideo(false);
                                 return;
                             } else if (touchPoint.startX - touchPoint.x > slideThreshold) {

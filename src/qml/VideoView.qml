@@ -812,6 +812,7 @@ Item {
                             }
                             if (touchPoint.startY - touchPoint.y > slideThreshold) {
                                 // Slide up to play next video
+                                var startIndex = currentIndex;
                                 currentIndex = (currentIndex + 1) % mediaData.length;
                                 var video = mediaData[currentIndex];
                                 var matchFilter = true;
@@ -826,6 +827,11 @@ Item {
                                         currentIndex = (currentIndex + 1) % mediaData.length;
                                         video = mediaData[currentIndex];
                                         matchFilter = true;
+                                        if(currentIndex === startIndex) {
+                                            updateFilteredInfo("");
+                                            updateFilteredTitle("");
+                                            break;
+                                        }
                                     } else {
                                         break;
                                     }
@@ -834,6 +840,7 @@ Item {
                                 return;
                             } else if (touchPoint.y - touchPoint.startY > slideThreshold) {
                                 // Slide down to play previous video
+                                var startIndex = currentIndex;
                                 currentIndex = (currentIndex - 1 + mediaData.length) % mediaData.length;
                                 var video = mediaData[currentIndex];
                                 do {
@@ -847,6 +854,11 @@ Item {
                                         currentIndex = (currentIndex - 1 + mediaData.length) % mediaData.length;
                                         video = mediaData[currentIndex];
                                         matchFilter = true;
+                                        if(currentIndex === startIndex) {
+                                            updateFilteredInfo("");
+                                            updateFilteredTitle("");
+                                            break;
+                                        }
                                     } else {
                                         break;
                                     }

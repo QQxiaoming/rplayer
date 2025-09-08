@@ -275,6 +275,19 @@ Item {
         }
     }
 
+    function stop() {
+        var currentMediaOutput = stackView.currentItem;
+        var currentPlayer = currentMediaOutput.player;
+        if(currentPlayer.videoOutput === videoOutputFull) {
+            exitFullScreen();
+        }
+        currentPlayer.stop();
+        currentMediaOutput.imageView.stop();
+        pauseIcon.visible = false;
+        progressBar.visible = false;
+        buttonFullScreen.visible = false;
+    }
+
     function togglePlaybackSpeed() {
         var currentMediaOutput = stackView.currentItem;
         var currentPlayer = currentMediaOutput.player;

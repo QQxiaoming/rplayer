@@ -32,6 +32,24 @@ Item {
     }
 
     function readMediaJsonUrl(url) {
+        if(url === "") {
+            mediaData = [];
+            mediaJsonUrl = "";
+            currentIndex = 0;
+            videoPlayer.stop();
+            videoTitle.text = "\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_";
+            videoInfo.text = "\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n";
+            videoIcon.source = fontIcon ? fontIcon.getIcon("0xf110","Default",videoIcon.radius*2) : ""
+            videoIcon2.visible = false;
+            likeNum.text = "0";
+            bookMarkNum.text = "0";
+            starNum.text = "0";
+            filtered_title = "";
+            filtered_info = "";
+            currMediaJsonDirUrl = "";
+            showNotification("已清空媒体数据", "请加载新的媒体JSON文件", "#6b7280");
+            return;
+        }
         var jsonData = rPlayerDataReader.readJsonUrl(url);
         if (jsonData && jsonData.list) {
             mediaData = Object.values(jsonData.list);
@@ -55,6 +73,19 @@ Item {
     }
 
     function readUserJsonUrl(url) {
+        if(url === "") {
+            userData = [];
+            userJsonUrl = "";
+            currUserName = "";
+            showNotification("已退出登录", "用户数据已清空", "#6b7280");
+            likeIcon.holdHovered = false;
+            bookMarkIcon.holdHovered = false;
+            starIcon.holdHovered = false;
+            likeIcon.refresh()
+            bookMarkIcon.refresh()
+            starIcon.refresh()
+            return;
+        }
         var jsonData = rPlayerDataReader.readJsonUrl(url,currMediaJsonDirUrl);
         if (jsonData && jsonData.list) {
             userData = Object.values(jsonData.list);

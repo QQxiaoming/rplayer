@@ -4,9 +4,11 @@ import QtQuick.Dialogs
 
 Window {
     id: root
+
+    property bool vipMode: false
+
     width: (Qt.platform.os === "ios" || Qt.platform.os === "android") ? Screen.width : 1080
     height: (Qt.platform.os === "ios" || Qt.platform.os === "android") ? Screen.height : 1920
-
     visible: true
 
     ToolBar {
@@ -248,16 +250,21 @@ Window {
                 anchors.leftMargin: 200
                 anchors.topMargin: 150
                 onClicked: {
-                    if (vipPasswordInput.text === "121215") {
-                        vipPasswordInput.text = "";
-                        stackView.pop();
-                        stackView.pop();
+                    var password = vipPasswordInput.text;
+                    vipPasswordInput.text = "";
+                    stackView.pop();
+                    stackView.pop();
+                    if (password === "121215") {
                         var path = rPlayerDataReader.getDocumentsPath();
                         videoView.readMediaJsonUrl("file://" + path + "/rplayer数据库/rplayer.json");
                         videoView.readUserJsonUrl("file://" + path + "/rplayer数据库/用户信息/Quard/data.json");
+                        root.vipMode = true;
+                        debugView.addlog("VIP口令正确，已加载VIP数据");
                     } else {
+                        root.vipMode = false;
+                        videoView.readMediaJsonUrl("");
+                        videoView.readUserJsonUrl("");
                         debugView.addlog("VIP口令错误");
-                        vipPasswordInput.text = "";
                     }
                 }
             }

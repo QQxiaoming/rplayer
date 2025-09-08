@@ -124,6 +124,8 @@ Item {
         function stop() {
             imageOutput.index = 0
             imageOutput.start = false
+            imageOutput.source = ""
+            imageOutput.sourceList = []
             timer.stop();
         }
     }

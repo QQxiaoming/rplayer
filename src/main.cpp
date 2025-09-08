@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("rPlayerDataReader", &rPlayerDataReader);
     FontIcon fontIcon;
     engine.rootContext()->setContextProperty("fontIcon", &fontIcon);
+    engine.rootContext()->setContextProperty("MAIN_UI_NAME", MAIN_UI_NAME);
 
     QObject::connect(
         &engine,

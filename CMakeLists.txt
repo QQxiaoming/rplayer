@@ -40,6 +40,7 @@ qt_add_qml_module(${CMAKE_PROJECT_NAME}
     RESOURCES 
         res/fontawesome-webfont-v6.6.0-brands-400.ttf 
         res/fontawesome-webfont-v6.6.0-solid-900.ttf
+        res/drawer_bg.png
 )
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE

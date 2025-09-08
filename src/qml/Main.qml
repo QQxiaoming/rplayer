@@ -6,6 +6,7 @@ Window {
     id: root
 
     property bool vipMode: false
+    property string vipDrawerBG: ""
 
     width: (Qt.platform.os === "ios" || Qt.platform.os === "android") ? Screen.width : 1080
     height: (Qt.platform.os === "ios" || Qt.platform.os === "android") ? Screen.height : 1920
@@ -256,12 +257,14 @@ Window {
                     stackView.pop();
                     if (password === "121215") {
                         var path = rPlayerDataReader.getDocumentsPath();
+                        root.vipDrawerBG = "file://" + path + "/rplayer数据库/drawer_bg.png";
                         videoView.readMediaJsonUrl("file://" + path + "/rplayer数据库/rplayer.json");
                         videoView.readUserJsonUrl("file://" + path + "/rplayer数据库/用户信息/Quard/data.json");
                         root.vipMode = true;
                         debugView.addlog("VIP口令正确，已加载VIP数据");
                     } else {
                         root.vipMode = false;
+                        root.vipDrawerBG = "qrc:/qt/qml/" + MAIN_UI_NAME + "/res/drawer_bg.png";
                         videoView.readMediaJsonUrl("");
                         videoView.readUserJsonUrl("");
                         debugView.addlog("VIP口令错误");
@@ -342,8 +345,10 @@ Window {
         id: drawer
         width: root.width * 0.5
         height: root.height
-        background: Rectangle {
-            color: "#363535"
+        background: Image {
+            source: vipMode ? vipDrawerBG : "qrc:/qt/qml/" + MAIN_UI_NAME + "/res/drawer_bg.png"
+            fillMode: Image.PreserveAspectCrop
+            anchors.fill: parent
         }
 
         property string color: "#f1f1f1"

@@ -51,7 +51,7 @@ jobs:
           mv ./IPAFolder/rplayer.ipa ./
 
       - name: Upload build asserts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: |
             rplayer.ipa

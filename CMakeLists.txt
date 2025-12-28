@@ -109,6 +109,11 @@ if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS      "YES"
         XCODE_ATTRIBUTE_UIRequiresFullScreen                "YES"   # Add this line
     )
+
+    # Include iOS-specific source to control idle timer (prevent screen dimming)
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+        src/platform/ios/ios_idle_timer.mm
+    )
 endif()
 
 ## Windows

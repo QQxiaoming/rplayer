@@ -7,6 +7,10 @@
 #include "rplayerdatareader.h"
 #include "fonticon.h"
 
+#ifdef Q_OS_IOS
+extern "C" void ios_setIdleTimerDisabled(bool disabled);
+#endif
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_WINDOSW) || defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
@@ -48,6 +52,11 @@ int main(int argc, char *argv[])
         window->setMinimumSize(QSize(1080, 1920));
         window->resize(QSize(1080, 1920));
     }
+#endif
+
+#ifdef Q_OS_IOS
+    // Disable iOS idle timer so the screen doesn't dim during playback
+    ios_setIdleTimerDisabled(true);
 #endif
 
     return app.exec();

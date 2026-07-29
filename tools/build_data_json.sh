@@ -18,11 +18,16 @@ info=$4
 
 mkdir -p $output_dir/json_tmp
 for filename in $output_dir/*; do
+    if [ "$filename" = "$output_dir/json_tmp" ]; then
+        continue
+    fi
     if [ -d "$filename" ]; then
-        python3 ./generate_image_data_json.py --dataDir $filename --output $output_dir/json_tmp/$(basename "$filename").json --icon $icon --title $title --info $info
+        python3 ./generate_image_data_json.py --dataDir $filename --output $output_dir/json_tmp/$(basename "$filename").json --icon "$icon" --title "$title" --info "$info"
     fi
 done
-python3 ./generate_video_data_json.py --dataDir $output_dir --output $output_dir/json_tmp/video.json --icon $icon --title $title --info $info
-python3 ./merge_data_json.py --dataDir $output_dir/json_tmp --output $current_dir/$output_dir_name.json
+python3 ./generate_video_data_json.py --dataDir $output_dir --output $output_dir/json_tmp/video.json --icon "$icon" --title "$title" --info "$info"
+if [ -f "$output_dir/json_tmp/video.json" ]; then
+    python3 ./merge_data_json.py --dataDir $output_dir/json_tmp --output $current_dir/$output_dir_name.json
+fi
 rm -rf $output_dir/json_tmp
 

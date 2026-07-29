@@ -9,25 +9,26 @@
 # |
 # |-video1.mp4
 # |-video2.mp4
-current_dir=$(cd $(dirname $0); pwd)
-output_dir=$1
-output_dir_name=$(basename $output_dir)
-icon=$2
-title=$3
-info=$4
+input_dir=$1
+output_dir=$2
+icon=$3
+title=$4
+info=$5
+prefix=$6
+input_dir_name=$6$(basename $input_dir)
 
-mkdir -p $output_dir/json_tmp
-for filename in $output_dir/*; do
-    if [ "$filename" = "$output_dir/json_tmp" ]; then
+mkdir -p $input_dir/json_tmp
+for filename in $input_dir/*; do
+    if [ "$filename" = "$input_dir/json_tmp" ]; then
         continue
     fi
     if [ -d "$filename" ]; then
-        python3 ./generate_image_data_json.py --dataDir $filename --output $output_dir/json_tmp/$(basename "$filename").json --icon "$icon" --title "$title" --info "$info"
+        python3 ./generate_image_data_json.py --dataDir $filename --output $input_dir/json_tmp/$(basename "$filename").json --icon "$icon" --title "$title" --info "$info"
     fi
 done
-python3 ./generate_video_data_json.py --dataDir $output_dir --output $output_dir/json_tmp/video.json --icon "$icon" --title "$title" --info "$info"
-if [ -f "$output_dir/json_tmp/video.json" ]; then
-    python3 ./merge_data_json.py --dataDir $output_dir/json_tmp --output $current_dir/$output_dir_name.json
+python3 ./generate_video_data_json.py --dataDir $input_dir --output $input_dir/json_tmp/video.json --icon "$icon" --title "$title" --info "$info"
+if [ -f "$input_dir/json_tmp/video.json" ]; then
+    python3 ./merge_data_json.py --dataDir $input_dir/json_tmp --output $output_dir/$input_dir_name.json
 fi
-rm -rf $output_dir/json_tmp
+rm -rf $input_dir/json_tmp
 

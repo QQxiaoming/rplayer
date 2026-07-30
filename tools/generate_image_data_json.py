@@ -3,7 +3,7 @@ import json
 import argparse
 import random
 	
-def generate(data_dir, output, title="", info="", icon_path="", like=-1, star=-1, bookMark=-1):
+def generate(data_dir, output, title="", info="", icon_path="", bgm="", like=-1, star=-1, bookMark=-1):
     files = os.listdir(data_dir)
     files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
 
@@ -23,6 +23,11 @@ def generate(data_dir, output, title="", info="", icon_path="", like=-1, star=-1
     for file in files:
         file_path = os.path.abspath(os.path.join(data_dir, file))
         item['path'].append('file://{}'.format(file_path))
+    if(len(bgm)):
+        if '://' in bgm:
+            item['bgm'] = bgm
+        else:
+            item['bgm'] = 'file://{}'.format(os.path.abspath(bgm))
     if(len(icon_path)):
         item['icon'] = 'file://{}'.format(os.path.abspath(icon_path))
     if(like != -1):
@@ -50,8 +55,9 @@ if __name__ == "__main__":
     parser.add_argument("--title", type=str, default="")
     parser.add_argument("--info", type=str, default="")
     parser.add_argument("--icon", type=str, default="")
+    parser.add_argument("--bgm", type=str, default="")
     parser.add_argument("--like", type=int, default=-1)
     parser.add_argument("--star", type=int, default=-1)
     parser.add_argument("--bookMark", type=int, default=-1)
     args = parser.parse_args()
-    generate(args.dataDir, args.output, args.title, args.info, args.icon, args.like, args.star, args.bookMark)
+    generate(args.dataDir, args.output, args.title, args.info, args.icon, args.bgm, args.like, args.star, args.bookMark)

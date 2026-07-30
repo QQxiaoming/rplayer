@@ -239,11 +239,21 @@ Item {
             progressBarFull.enabled = false;
             currentMediaOutput.imageView.stop();
             nextMediaOutput.imageView.play(source.path);
-            if(typeof source.audio === "undefined") {
+            var imageAudio = source.bgm;
+            if(typeof imageAudio === "undefined") {
+                imageAudio = source.backgroundMusic;
+            }
+            if(typeof imageAudio === "undefined") {
+                imageAudio = source.music;
+            }
+            if(typeof imageAudio === "undefined") {
+                imageAudio = source.audio;
+            }
+            if(typeof imageAudio === "undefined" || imageAudio === null || imageAudio === "") {
                 currentPlayer.audioOutput = null;
                 nextPlayer.audioOutput = null;
             } else {
-                nextPlayer.source = source.audio;
+                nextPlayer.source = imageAudio;
                 nextPlayer.play();
                 currentPlayer.audioOutput = null;
                 nextPlayer.audioOutput = audioOutput;

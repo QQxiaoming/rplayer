@@ -234,10 +234,18 @@ Item {
 
     function refreshVideo(direction) {
         var video = mediaData[currentIndex];
+        var imageBgm = undefined;
+        if(typeof video.bgm !== "undefined") {
+            imageBgm = video.bgm;
+        } else if(typeof video.backgroundMusic !== "undefined") {
+            imageBgm = video.backgroundMusic;
+        } else if(typeof video.music !== "undefined") {
+            imageBgm = video.music;
+        }
         if(typeof video.type === "undefined") {
-            videoPlayer.switchVideo("video",{"path": video.path, "audio": null},direction);
+            videoPlayer.switchVideo("video",{"path": video.path, "audio": null, "bgm": null},direction);
         } else {
-            videoPlayer.switchVideo(video.type,{"path": video.path, "audio": video.audio},direction);
+            videoPlayer.switchVideo(video.type,{"path": video.path, "audio": video.audio, "bgm": imageBgm},direction);
         }
         videoTitle.text = video.title;
         videoInfo.text = video.info;

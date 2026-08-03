@@ -882,6 +882,7 @@ Item {
                                 var startIndex = currentIndex;
                                 currentIndex = (currentIndex - 1 + mediaData.length) % mediaData.length;
                                 var video = mediaData[currentIndex];
+                                var matchFilter = true;
                                 do {
                                     if(filtered_title !== "") {
                                         matchFilter = matchFilter && (video.title === filtered_title);
